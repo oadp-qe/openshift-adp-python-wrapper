@@ -4,10 +4,7 @@ from openshift.dynamic import DynamicClient
 from openshift_resources.data_protection_application import DataProtectionApplication
 
 
-class DynamicClient:
-    pass
-
-
+@pytest.fixture(scope="module")
 def oadp_ocp_client():
     yield  DynamicClient(client=kubernetes.config.new_client_from_config())
 
