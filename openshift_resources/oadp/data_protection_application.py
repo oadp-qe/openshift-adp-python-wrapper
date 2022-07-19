@@ -2,13 +2,14 @@ import logging
 
 from ocp_resources.resource import NamespacedResource
 
-from openshift_resources.constants import FOUR_MINUTES
+from constants.common import FOUR_MINUTES
+from constants.resources import OADP_API_GROUP
 
 LOGGER = logging.getLogger(__name__)
 
 
 class DataProtectionApplication(NamespacedResource):
-    api_group = "oadp.openshift.io"
+    api_group = OADP_API_GROUP
 
     def __init__(self,
         name,
