@@ -1,0 +1,13 @@
+apiVersion: velero.io/v1
+kind: Backup
+metadata:
+  name: mysql-persistent
+  labels:
+    velero.io/storage-location: default
+  namespace: openshift-adp
+spec:
+  hooks: {}
+  includedNamespaces:
+  - mysql-persistent
+  storageLocation: <% dpa_resource_name %>-1
+  ttl: 720h0m0s

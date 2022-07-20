@@ -1,1 +1,2 @@
-FOUR_MINUTES = 240
+OADP_API_GROUP = "oadp.openshift.io"
+VELERO_API_GROP = "velero.io"

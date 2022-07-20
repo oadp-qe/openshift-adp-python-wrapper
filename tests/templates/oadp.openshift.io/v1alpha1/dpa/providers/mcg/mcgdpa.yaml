@@ -1,0 +1,31 @@
+
+apiVersion: oadp.openshift.io/v1alpha1
+kind: DataProtectionApplication
+metadata:
+  namespace: velero
+  name: example-velero
+spec:
+  configuration:
+    velero:
+      defaultPlugins:
+      - openshift
+      - aws
+    restic:
+      enable: true
+  backupLocations:
+    - name: default
+      velero:
+        provider: aws
+        default: true
+        objectStorage:
+          bucket: $BUCKET
+          prefix: velero
+        config:
+          insecureSkipTLSVerify: 'true'
+          profile: noobaa
+          region: noobaa
+          s3ForcePathStyle: 'true'
+          s3Url: https://$(oc get route s3 -n openshift-storage -o jsonpath='{.spec.host}')
+        credential:
+          name: cloud-credentials
+          key: cloud

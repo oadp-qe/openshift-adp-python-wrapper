@@ -1,13 +1,8 @@
 from ocp_resources.resource import NamespacedResource
 
+import openshift_resources.constants
+
 
 class Backup(NamespacedResource):
 
-    api_group = "oadp.openshift.io"
-
-    def __init__(self,
-                 hooks,
-                 namespaces_to_include,
-                 storage_location,
-                 ):
-        pass
+    api_group = openshift_resources.constants.VELERO_API_GROP

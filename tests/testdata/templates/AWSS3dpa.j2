@@ -1,0 +1,48 @@
+apiVersion: oadp.openshift.io/v1alpha1
+kind: DataProtectionApplication
+metadata:
+  name: {{ name }}
+  namespace: {{ namespace }}
+spec:
+  configuration:
+    velero:
+      defaultPlugins:
+      - openshift
+      - aws
+{% if enable_csi is defined and enable_csi %}
+      - csi
+{% endif %}
+
+{% if enable_restic is defined  and enable_restic %}
+    restic:
+      enable:  {{ enable_restic  }}
+{% endif %}
+
+  backupLocations:
+    - name: default
+      velero:
+        provider: {{ backup_location_provider }}
+        default: true
+        objectStorage:
+          bucket: {{ backup_location_bucket }}
+          prefix: velero
+        config:
+          profile: default
+          region: {{ backup_locations_region }}
+        credential:
+          {% if credentials_secret_name is defined %}
+          name: {{ credentials_secret_name }}
+          {% else %}
+          name: cloud-credentials
+          {% endif %}
+          key: cloud
+
+{% if enable_vsl is defined and enable_vsl %}
+  snapshotLocations:
+    - name: default
+      velero:
+        provider: {{ snapshot_location_provider }}
+        config:
+          region:  {{ snapshot_location_region }}
+          profile: {{ snapshot_location_profile }}
+{% endif %}
