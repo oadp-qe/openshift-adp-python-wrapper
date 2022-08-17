@@ -1,2 +1,9 @@
 OADP_API_GROUP = "oadp.openshift.io"
 VELERO_API_GROUP = "velero.io"
+STATUS_UNAVAILABLE = "Unavailable"
+STATUS_AVAILABLE = "Available"
+STATUS_FAILED_TO_RECONCILE = "False"
+STATUS_SUC_RECONCILED = "True"
+CONDITION_RECONCILED = "Reconciled"
+
+
