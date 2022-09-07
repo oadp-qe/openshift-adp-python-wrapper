@@ -20,16 +20,10 @@ class OpenshiftResourceJinja2BasedBuilder:
         namespace: for all resource created by an instance of this class
     """
 
-    @staticmethod
-    def env_override(value, key):
-        return os.getenv(key, value)
-
     def __init__(self, resource_api_class, template_folder, namespace):
         self.environment = Environment(loader=FileSystemLoader(template_folder))
         self.resource_api_class = resource_api_class
         self.namespace = namespace
-
-        self.environment.filters['env_override'] = self.env_override
 
     def create(self,
                name,
