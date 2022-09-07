@@ -33,7 +33,7 @@ class OpenshiftResourceJinja2BasedBuilder:
         kwargs["namespace"] = self.namespace
 
         resource_yaml_str = self.environment.get_template(name=template).render((), **kwargs)
-        logger.info(f"Re-Creating {self.resource_api_class}/{name}")
+        logger.info(f"Creating {self.resource_api_class.kind}/{name}")
         logger.info(resource_yaml_str)
         resource_api = self.resource_api_class(
             # do not remove.
