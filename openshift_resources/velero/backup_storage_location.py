@@ -1,5 +1,5 @@
 from ocp_resources.resource import NamespacedResource
-import constants.resources as r
+import wrapper_constants.resources as r
 
 
 class BackupStorageLocation(NamespacedResource):
