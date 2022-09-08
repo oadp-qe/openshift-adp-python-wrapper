@@ -1,5 +1,5 @@
 from ocp_resources.resource import NamespacedResource
-from constants.resources import VELERO_API_GROUP
+from wrapper_constants.resources import VELERO_API_GROUP
 
 
 class Backup(NamespacedResource):
