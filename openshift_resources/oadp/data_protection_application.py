@@ -1,5 +1,5 @@
 import logging
-import constants.resources as r
+import wrapper_constants.resources as r
 
 from ocp_resources.resource import NamespacedResource
 
