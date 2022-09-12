@@ -1,6 +1,7 @@
 from ocp_resources.resource import NamespacedResource
-from wrapper_constants.resources import VELERO_API_GROUP
+
+import wrapper_constants.resources as r
 
 
 class Backup(NamespacedResource):
-    api_group = VELERO_API_GROUP
+    api_group = r.resources.ApiGroups.VELERO_API_GROUP.value
