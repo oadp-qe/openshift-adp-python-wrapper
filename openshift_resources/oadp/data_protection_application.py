@@ -15,4 +15,3 @@ class DataProtectionApplication(NamespacedResource):
     def wait_for_failed_reconciliation(self):
         self.wait_for_condition(condition=r.Condition.CONDITION_RECONCILED.value, status=r.Status.FAILED_TO_RECONCILE.value)
 
-git
