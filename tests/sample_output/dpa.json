@@ -1,0 +1,53 @@
+{
+    "apiVersion": "oadp.openshift.io/v1alpha1",
+    "kind": "DataProtectionApplication",
+    "metadata": {
+        "creationTimestamp": "2022-11-08T13:01:33Z",
+        "generation": 1,
+        "name": "test-dpa",
+        "namespace": "openshift-adp",
+        "resourceVersion": "173507",
+        "uid": "1ec9b1ff-8d4b-4624-80ff-d060782718b2"
+    },
+    "spec": {
+        "backupLocations": [
+            {
+                "velero": {
+                    "config": {
+                        "profile": "default",
+                        "region": "us-east-2"
+                    },
+                    "credential": {
+                        "key": "cloud",
+                        "name": "cloud-credentials"
+                    },
+                    "default": true,
+                    "objectStorage": {
+                        "bucket": "oadpbucket1538xx",
+                        "prefix": "velero"
+                    },
+                    "provider": "aws"
+                }
+            }
+        ],
+        "configuration": {
+            "velero": {
+                "defaultPlugins": [
+                    "openshift",
+                    "aws"
+                ]
+            }
+        }
+    },
+    "status": {
+        "conditions": [
+            {
+                "lastTransitionTime": "2022-11-08T13:01:33Z",
+                "message": "Reconcile complete",
+                "reason": "Complete",
+                "status": "True",
+                "type": "Reconciled"
+            }
+        ]
+    }
+}
