@@ -1,70 +1,43 @@
-import six
-from kubernetes.client import V1LabelSelector
-from ocp_resources.resource import NamespacedResource
+from typing import List, Dict, Optional, Any
 
-import wrapper_constants.resources as r
-from openshift_resources.base_model import BaseModel
-from wrapper_constants.velero.backup import HookErrorMode
+from kubernetes.dynamic import DynamicClient
+from pydantic import BaseModel, Field
+from resources.io.k8s.apimachinery.pkg.apis.meta.v1 import LabelSelector, ObjectMeta
 
-"k8s.io/apimachinery/pkg/apis/meta/v1"
-
+from wrapper_constants.velero.backup import HookErrorMode, BackupPhase
 
 class Metadata(BaseModel):
     """
-    BackupSpec defines the specification for a Velero backup.
+    BackupSpec defines the specification for a Velero backup.json.
     """
 
-    def __init__(self):
-        self._labels = {}  # `json:"labels,omitempty"`
+    labels: Optional[dict]  # `json:"labels,omitempty"`
 
 
-class BackupSpec(BaseModel):
-    # BackupSpec defines the specification for a Velero backup.
+class ExecHook(BaseModel):
+    # ExecHook is a hook that uses the pod exec API to execute a command in a container in a pod.
     """
-    BackupSpec defines the specification for a Velero backup.
-    """
+    ExecHook is a hook that uses the pod exec API to execute a command in a container in a pod.
 
-    def __init__(self):
-        # self.Metadata # `json:"metadata,omitempty"`
-
-        self._includedNamespaces: list[str] = []  # `json:"includedNamespaces,omitempty"`
-
-        self._excludedNamespaces: list[str] = []  # `json:"excludedNamespaces,omitempty"`
-
-        self._includedResources: list[str] = []  # `json:"includedResources,omitempty"`
-
-        self._excludedResources: list[str] = []  # `json:"excludedResources,omitempty"`
-
-        self._labelSelector: V1LabelSelector = V1LabelSelector()  # `json:"labelSelector,omitempty"`
-
-        self._orLabelSelectors: list[V1LabelSelector] = []  # `json:"orLabelSelectors,omitempty"`
-
-        self._snapshotVolumes: bool  # `json:"snapshotVolumes,omitempty"`
-
-        self._ttl: str = ""  # `json:"ttl,omitempty"`
-
-        self._includeClusterResources: bool = None  # `json:"includeClusterResources,omitempty"`
-
-        self._hooks: BackupHooks = BackupHooks()  # `json:"hooks,omitempty"`
-
-        self._storageLocation: str = ""  # `json:"storageLocation,omitempty"`
-
-        self._volumeSnapshotLocations: list[str]  # `json:"volumeSnapshotLocations,omitempty"`
-
-        self._defaultVolumesToRestic: bool  # `json:"defaultVolumesToRestic,omitempty"`
-
-        self._orderedResources: {}  # `json:"orderedResources,omitempty"`
-
-
-class BackupHooks(BaseModel):
-    # BackupHooks contains custom behaviors that should be executed at different phases of the backup.
-    """
-    BackupHooks contains custom behaviors that should be executed at different phases of the backup.
-    # Resources are hooks that should be executed when backing up individual instances of a resource.
+    # _container is the container in the pod where the command should be executed. If not specified,
+    # the pod's first container is used.
+    # +optional
     """
 
-    def __init__(self):
-        self._resources: list[BackupResourceHookSpec] = []  # `json:"resources,omitempty"`
+    container: Optional[str]
+    command: Optional[List[str]]
+    onError: Optional[HookErrorMode]
+    timeout: Optional[str]
+
+
+class BackupResourceHook(BaseModel):
+    # BackupResourceHook defines a hook for a resource.
+    """
+    BackupResourceHook defines a hook for a resource.
+    exec defines an exec hook.
+    """
+
+    exec: Optional[ExecHook]
 
 
 class BackupResourceHookSpec(BaseModel):
@@ -79,101 +52,81 @@ class BackupResourceHookSpec(BaseModel):
     the rules defined for namespaces, resources, and label selector.
     """
 
-    def __init__(self):
-        self._name: str = ""  # `json:"name"`
-
-        self._includedNamespaces: list[str] = []  # `json:"includedNamespaces,omitempty"`
-
-        self._excludedNamespaces: list[str] = []  # `json:"excludedNamespaces,omitempty"`
-
-        self._includedResources: list[str] = []  # `json:"includedResources,omitempty"`
-
-        self._excludedResources: list[str] = []  # `json:"excludedResources,omitempty"`
-
-        self._labelSelector: V1LabelSelector = V1LabelSelector()  # `json:"labelSelector,omitempty"`
-
-        self._preHooks: [BackupResourceHook] = []  # `json:"pre,omitempty"`
-
-        self._postHooks: [BackupResourceHook] = []  # `json:"post,omitempty"`
+    name: Optional[str]
+    includedNamespaces: Optional[List[str]]
+    excludedNamespaces: Optional[List[str]]
+    includedResources: Optional[List[str]]
+    excludedResources: Optional[List[str]]
+    labelSelector: LabelSelector
+    preHooks: Optional[List[BackupResourceHook]]
+    postHooks: Optional[List[BackupResourceHook]]
 
 
-class BackupResourceHook(BaseModel):
-    # BackupResourceHook defines a hook for a resource.
+
+class BackupHooks(BaseModel):
+    # BackupHooks contains custom behaviors that should be executed at different phases of the backup.json.
     """
-    BackupResourceHook defines a hook for a resource.
-    exec defines an exec hook.
+    BackupHooks contains custom behaviors that should be executed at different phases of the backup.json.
+    # Resources are hooks that should be executed when backing up individual instances of a resource.
     """
-
-    def __init__(self):
-        self._exec = ExecHook()  # `json:"exec"`
+    resources: Optional[List[BackupResourceHookSpec]]
 
 
-class ExecHook(BaseModel):
-    # ExecHook is a hook that uses the pod exec API to execute a command in a container in a pod.
+class BackupSpec(BaseModel):
+    # BackupSpec defines the specification for a Velero backup.json.
     """
-    ExecHook is a hook that uses the pod exec API to execute a command in a container in a pod.
-
-    # _container is the container in the pod where the command should be executed. If not specified,
-    # the pod's first container is used.
-    # +optional
+    BackupSpec defines the specification for a Velero backup.json.
     """
 
-    def __init__(self):
-        self._container = str = ""  # `json:"container,omitempty"`
+    # self.Metadata # `json:"metadata,omitempty"`
 
-        self._command: [str] = []  # `json:"command"`
-
-        self._onError: HookErrorMode = None  # `json:"onError,omitempty"`
-
-        self._timeout: str = ""  # `json:"timeout,omitempty"`
-
-
-class BackupList(BaseModel):
-    # +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
-
-    # BackupList is a list of Backups.
-    """
-    +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
-    """
-
-    def __init__(self):
-        self._items = [Backup]  # `json:"items"`
+    includedNamespaces: Optional[List[str]]
+    excludedNamespaces: Optional[List[str]]
+    includedResources: Optional[List[str]]
+    excludedResources: Optional[List[str]]
+    labelSelector: Optional[LabelSelector]
+    orLabelSelectors: Optional[List[LabelSelector]]
+    snapshotVolumes: Optional[bool]  # `json:"snapshotVolumes,omitempty"`
+    ttl: Optional[str]
+    includeClusterResources: Optional[bool]
+    hooks: Optional[BackupHooks]
+    storageLocation: Optional[str]
+    volumeSnapshotLocations: Optional[List[str]]  # `json:"volumeSnapshotLocations,omitempty"`
+    defaultVolumesToRestic: Optional[bool]  # `json:"defaultVolumesToRestic,omitempty"`
+    orderedResources: Optional[Dict]  # `json:"orderedResources,omitempty"`
 
 
-class Backup(NamespacedResource):
-    api_group = r.ApiGroups.VELERO_API_GROUP.value
-
-    def __init__(self, *args, namespace="openshift-adp", **kwargs):
-        super().__init__(*args, namespace=namespace, **kwargs)
-        self._spec: BackupSpec = BackupSpec()  # `json:"spec,omitempty"`
-
-    @property
-    def spec(self) -> BackupSpec:
-        return self._spec
-
-    @classmethod
-    def construct_backup(cls, name,
-                         **kwargs):
-        backup = cls(name=name)
-        # initialize self.resource_dict
-        backup.to_dict()
-        # update additional fields in case they were passed by kwargs
-        backup.resource_dict.update(kwargs)
-        return backup
-
-    def to_dict(self):
-        # to_dict is called in create function, and it overrides self.resource_dict in case
-        # one doesn't provide a yaml file. We would like to bypass this problematic behavior
-        # by not calling the parent class' implementation in case self.resource_dict is already set
-        if self.yaml_file or not self.resource_dict:
-            return super().to_dict()
-        elif self.resource_dict and not self.resource_dict.get('spec'):
-            self.resource_dict['spec'] = self._spec.to_dict()
-        return self.resource_dict
+class BackupStatus(BaseModel):
+    completionTimestamp: Optional[Any]
+    csiVolumeSnapshotsAttempted: Optional[int]
+    csiVolumeSnapshotsCompleted: Optional[int]
+    errors: Optional[int]
+    expiration: Optional[Any]
+    failureReason: Optional[str]
+    formatVersion: Optional[str]
+    phase: Optional[BackupPhase]
+    progress: Optional[Any]
+    startTimestamp: Optional[Any]
+    validationErrors: Optional[Any]
+    version: Optional[int]
+    volumeSnapshotsAttempted: Optional[int]
+    volumeSnapshotsCompleted: Optional[int]
+    warnings: Optional[int]
 
 
-if __name__ == "__main__":
-    b = Backup.construct_backup("test")
-    b.spec.includedNamespaces = ["mysql-persistent"]
-    b.to_dict()
-    b.create()
+class Backup(BaseModel):
+    apiVersion: Optional[str]
+    kind :str = Field(__qualname__)
+    metadata: Optional[ObjectMeta]
+    spec: Optional[BackupSpec]
+    status: Optional[BackupStatus]
+
+
+class BackupBuilder:
+
+    # TODO: define better
+    def __init__(self, *args, **kwargs):
+        self.resource = Backup,
+        # TODO: add client
+        self.client: DynamicClient # type DynamicClient
+
