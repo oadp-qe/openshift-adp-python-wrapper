@@ -4,7 +4,10 @@ from kubernetes.dynamic import DynamicClient
 from pydantic import BaseModel, Field
 from resources.io.k8s.apimachinery.pkg.apis.meta.v1 import LabelSelector, ObjectMeta
 
+from openshift_resources.resource import BaseResource
+from wrapper_constants.resources import ApiGroups
 from wrapper_constants.velero.backup import HookErrorMode, BackupPhase
+
 
 class Metadata(BaseModel):
     """
@@ -62,7 +65,6 @@ class BackupResourceHookSpec(BaseModel):
     postHooks: Optional[List[BackupResourceHook]]
 
 
-
 class BackupHooks(BaseModel):
     # BackupHooks contains custom behaviors that should be executed at different phases of the backup.json.
     """
@@ -114,19 +116,7 @@ class BackupStatus(BaseModel):
     warnings: Optional[int]
 
 
-class Backup(BaseModel):
-    apiVersion: Optional[str]
-    kind :str = Field(__qualname__)
-    metadata: Optional[ObjectMeta]
+class Backup(BaseResource):
+    api_group : Optional[str] = Field(ApiGroups.VELERO_API_GROUP.value, exclude=True, repr=False)
     spec: Optional[BackupSpec]
     status: Optional[BackupStatus]
-
-
-class BackupBuilder:
-
-    # TODO: define better
-    def __init__(self, *args, **kwargs):
-        self.resource = Backup,
-        # TODO: add client
-        self.client: DynamicClient # type DynamicClient
-
