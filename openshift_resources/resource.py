@@ -1,9 +1,14 @@
+import logging
 from abc import ABCMeta
+from datetime import datetime, timedelta
+from time import sleep
 from typing import Optional, Any
 
 from ocp_resources.resource import _get_client, _get_api_version
 from pydantic import BaseModel, Field
 from resources.io.k8s.apimachinery.pkg.apis.meta.v1 import ObjectMeta
+
+logger = logging.getLogger(__name__)
 
 
 class BaseResource(BaseModel, metaclass=ABCMeta):
@@ -117,3 +122,32 @@ class BaseResource(BaseModel, metaclass=ABCMeta):
         new_resource_builder.discover_kind()
         new_resource_builder.discover_api_version()
         return new_resource_builder
+
+    def wait_for_status_phase(self, status_phase, exit_phases=[], timeout=240, wait_interval=1):
+        """
+        Wait for a given status.phase value.
+        Return true when found and the last status phase sample.
+        Return False is the status.phase is in exit_phases Or after timeing out (, last status phase sample.)
+        """
+
+        logger.info(f"wait for {self.kind}/{self.name} in namespace {self.namespace} status phase to be {status_phase}")
+        logger.info(f"exit phases: {exit_phases}")
+        start_time = datetime.now()
+        end_time = start_time + timedelta(seconds=timeout)
+        timed_out = False
+        current_status_phase = None
+        while not timed_out:
+            #TODO: return is not dict
+            current_status_phase = self.get("status", {"phase": None}).get("phase")
+            logger.info(f"current status phase: {current_status_phase}")
+            if current_status_phase == status_phase:
+                return True, current_status_phase
+            if current_status_phase in exit_phases:
+                logger.info(f"last status {current_status_phase} is found in exit phase list.")
+                return False, current_status_phase
+            logger.info(f"sleeping for {timeout} seconds...")
+            sleep(wait_interval)
+            timed_out = (end_time < datetime.now())
+
+        logger.info(f"time out waiting for status phase: {status_phase}")
+        return False, current_status_phase
