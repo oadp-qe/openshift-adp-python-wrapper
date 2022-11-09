@@ -6,7 +6,12 @@ from pydantic import BaseModel, Field
 from resources.io.k8s.apimachinery.pkg.apis.meta.v1 import ObjectMeta
 
 
-class BaseResource(BaseModel, metaclass=ABCMeta):
+class NewBaseModel(BaseModel):
+    class Config:
+        use_enum_values = True
+
+
+class BaseResource(NewBaseModel, metaclass=ABCMeta):
     # fields included in the resource manifests; those fields could be "serialized"/"deserialized"
     apiVersion: Optional[str]
     kind: Optional[str]
