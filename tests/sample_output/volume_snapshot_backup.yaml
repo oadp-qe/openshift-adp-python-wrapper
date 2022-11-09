@@ -1,0 +1,39 @@
+apiVersion: datamover.oadp.openshift.io/v1alpha1
+kind: VolumeSnapshotBackup
+metadata:
+  creationTimestamp: "2022-09-15T16:15:01Z"
+  generateName: vsb-
+  generation: 1
+  labels:
+    velero.io/backup-name: data-mover
+  managedFields:
+  - apiVersion: datamover.oadp.openshift.io/v1alpha1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:generateName: {}
+        f:labels:
+          .: {}
+          f:velero.io/backup-name: {}
+      f:spec:
+        .: {}
+        f:protectedNamespace: {}
+        f:resticSecretRef:
+          .: {}
+          f:name: {}
+        f:volumeSnapshotContent:
+          .: {}
+          f:name: {}
+    manager: velero-plugin-for-csi
+    operation: Update
+    time: "2022-09-15T16:15:01Z"
+  name: test-volume-snapshot-backup
+  namespace: default
+  resourceVersion: "1657840"
+  uid: 023d16a0-67b5-40d6-80b9-87622dbebe22
+spec:
+  protectedNamespace: openshift-adp
+  resticSecretRef:
+    name: ts-1-volsync-restic
+  volumeSnapshotContent:
+    name: snapcontent-fdbea5e9-e14b-4c5c-a367-fd1fe90a1dbe
