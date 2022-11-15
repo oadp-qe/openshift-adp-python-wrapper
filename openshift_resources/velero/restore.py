@@ -10,11 +10,13 @@ from pydantic import BaseModel, Field
 from resources.io.k8s.api.core import v1 as corev1
 from resources.io.k8s.apimachinery.pkg.apis.meta import v1 as metav1
 
-from openshift_resources.resource import BaseResource
+from openshift_resources.resource import BaseResource, NewBaseModel
+from wrapper_constants.resources import ApiGroups
 from wrapper_constants.velero.restore import RestorePhase, HookErrorMode, PolicyType
 
 
-class ExecRestoreHook(BaseModel):
+class ExecRestoreHook(NewBaseModel):
+
     command: List[str] = Field(
         ...,
         description='Command is the command and arguments to execute from within a container after a pod has been restored.',
@@ -38,7 +40,8 @@ class ExecRestoreHook(BaseModel):
     )
 
 
-class InitRestoreHook(BaseModel):
+class InitRestoreHook(NewBaseModel):
+
     initContainers: Optional[List[corev1.Container]] = Field(
         None,
         description='InitContainers is list of init containers to be added to a pod during its restore.',
@@ -49,12 +52,12 @@ class InitRestoreHook(BaseModel):
     )
 
 
-class RestoreResourceHook(BaseModel):
+class RestoreResourceHook(NewBaseModel):
     exec: Optional[ExecRestoreHook] = Field(None, description='Exec defines an exec restore hook.')
     init: Optional[InitRestoreHook] = Field(None, description='Init defines an init restore hook.')
 
 
-class RestoreResourceHookSpec(BaseModel):
+class RestoreResourceHookSpec(NewBaseModel):
     excludedNamespaces: Optional[List[str]] = Field(
         None,
         description='ExcludedNamespaces specifies the namespaces to which this hook spec does not apply.',
@@ -82,11 +85,14 @@ class RestoreResourceHookSpec(BaseModel):
     )
 
 
-class RestoreHooks(BaseModel):
-    resources: Optional[List[RestoreResourceHook]] = None
+class RestoreHooks(NewBaseModel):
+    resources: Optional[List[RestoreResourceHookSpec]] = None
 
+class RestoreStatusSpec(NewBaseModel):
+    includedResources: Optional[List[str]] = Field(None)
+    excludedResources: Optional[List[str]] = Field(None)
 
-class RestoreSpec(BaseModel):
+class RestoreSpec(NewBaseModel):
     backupName: str = Field(
         ...,
         description='BackupName is the unique name of the Velero backup to restore from.',
@@ -149,12 +155,7 @@ class RestoreSpec(BaseModel):
     )
 
 
-class RestoreStatusSpec(BaseModel):
-    includedResources: Optional[List[str]]
-    excludedResources: Optional[List[str]]
-
-
-class RestoreStatus(BaseModel):
+class RestoreStatus(NewBaseModel):
     completionTimestamp: Optional[str] = Field(
         None,
         description="CompletionTimestamp records the time the restore operation was completed. Completion time is recorded even on failed restore. The server's time is used for StartTimestamps",
@@ -188,24 +189,13 @@ class RestoreStatus(BaseModel):
     )
 
 
-class RestoreProgress(BaseModel):
+class RestoreProgress(NewBaseModel):
     totalItems: Optional[int]
     itemsRestored: Optional[int]
 
 
 class Restore(BaseResource):
-    apiVersion: Optional[str] = Field(
-        None,
-        description='APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources',
-    )
-    kind: Optional[str] = Field(
-        None,
-        description='Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds',
-    )
-    metadata: Optional[metav1.ObjectMeta] = Field(
-        None,
-        description="Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata",
-    )
+    api_group: Optional[str] = Field(ApiGroups.VELERO_API_GROUP.value, exclude=True, repr=False)
     spec: Optional[RestoreSpec] = Field(
         None, description='RestoreSpec defines the specification for a Velero restore.'
     )
@@ -215,7 +205,7 @@ class Restore(BaseResource):
     )
 
 
-class RestoreList(BaseModel):
+class RestoreList(NewBaseModel):
     apiVersion: Optional[str] = Field(
         None,
         description='APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources',
