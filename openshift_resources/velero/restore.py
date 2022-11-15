@@ -16,6 +16,7 @@ from wrapper_constants.velero.restore import RestorePhase, HookErrorMode, Policy
 
 
 class ExecRestoreHook(NewBaseModel):
+
     command: List[str] = Field(
         ...,
         description='Command is the command and arguments to execute from within a container after a pod has been restored.',
@@ -40,6 +41,7 @@ class ExecRestoreHook(NewBaseModel):
 
 
 class InitRestoreHook(NewBaseModel):
+
     initContainers: Optional[List[corev1.Container]] = Field(
         None,
         description='InitContainers is list of init containers to be added to a pod during its restore.',

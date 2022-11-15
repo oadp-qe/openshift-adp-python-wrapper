@@ -1,0 +1,49 @@
+{
+    "apiVersion": "velero.io/v1",
+    "kind": "BackupStorageLocation",
+    "metadata": {
+        "creationTimestamp": "2022-11-09T08:42:20Z",
+        "generation": 165,
+        "labels": {
+            "app.kubernetes.io/component": "bsl",
+            "app.kubernetes.io/instance": "ts-dpa-1",
+            "app.kubernetes.io/managed-by": "oadp-operator",
+            "app.kubernetes.io/name": "oadp-operator-velero",
+            "openshift.io/oadp": "True",
+            "openshift.io/oadp-registry": "True"
+        },
+        "name": "test-backup-storage-location",
+        "namespace": "default",
+        "ownerReferences": [
+            {
+                "apiVersion": "oadp.openshift.io/v1alpha1",
+                "blockOwnerDeletion": true,
+                "controller": true,
+                "kind": "DataProtectionApplication",
+                "name": "ts-dpa",
+                "uid": "1b410d55-51f7-4aff-9fa4-f17dd83e639a"
+            }
+        ],
+        "resourceVersion": "84629",
+        "uid": "f130dc21-56e6-4432-8a4b-c54ef0655d9c"
+    },
+    "spec": {
+        "credential": {
+            "key": "cloud",
+            "name": "cloud-credentials-gcp"
+        },
+        "default": true,
+        "objectStorage": {
+            "bucket": "oadpbucket154277",
+            "prefix": "velero-e2e-6607274e-600a-11ed-b0f3-902e163f806c"
+        },
+        "accessMode": "ReadOnly",
+        "provider": "gcp"
+    },
+    "status": {
+        "lastSyncedTime": "2022-11-09T10:04:14Z",
+        "lastValidationTime": "2022-11-09T10:04:05Z",
+        "phase": "Available"
+    }
+}
+
