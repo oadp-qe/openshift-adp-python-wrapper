@@ -1,7 +1,7 @@
 import kubernetes
 
 from openshift.dynamic import DynamicClient
-from openshift_resources.oadp.data_protection_application import DataProtectionApplication
+from openshift_resources.model.oadp import DataProtectionApplication
 
 
 class DynamicClient:

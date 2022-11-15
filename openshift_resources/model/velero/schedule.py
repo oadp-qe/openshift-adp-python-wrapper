@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 from resources.io.k8s.apimachinery.pkg.apis.meta import v1 as metav1
 
 from openshift_resources.resource import BaseResource
-from openshift_resources.velero.backup import BackupSpec
+from openshift_resources.model.velero.backup import BackupSpec
 from wrapper_constants.resources import ApiGroups
 from wrapper_constants.velero.schedule import SchedulePhase
 

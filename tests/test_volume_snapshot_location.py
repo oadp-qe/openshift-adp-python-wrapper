@@ -1,11 +1,10 @@
-import json
 from pathlib import Path
 
 import pytest
 import yaml
 from kubernetes.client import ApiException
 
-from openshift_resources.velero.volume_snapshot_location import VolumeSnapshotLocation
+from openshift_resources.model.velero import VolumeSnapshotLocation
 
 path = str(Path(__file__).parent)
 

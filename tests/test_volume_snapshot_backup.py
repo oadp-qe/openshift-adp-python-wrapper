@@ -4,7 +4,7 @@ import pytest
 import yaml
 from kubernetes.client import ApiException
 
-from openshift_resources.oadp.datamover.volume_snapshot_backup import VolumeSnapshotBackup
+from openshift_resources.model.oadp.datamover.volume_snapshot_backup import VolumeSnapshotBackup
 
 path = str(Path(__file__).parent)
 

@@ -8,7 +8,7 @@ from wrapper_constants.oadp.datamover.volume_snapshot_restore import VolumeSnaps
 from wrapper_constants.resources import ApiGroups
 
 from .volume_snapshot_backup import PVCData
-from ...resource import BaseResource
+from openshift_resources.resource import BaseResource
 
 
 class VSBRef(BaseModel):
