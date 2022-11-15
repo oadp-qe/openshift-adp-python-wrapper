@@ -4,7 +4,7 @@ import pytest
 import yaml
 from kubernetes.client import ApiException
 
-from openshift_resources.velero.restore import Restore
+from openshift_resources.model.velero.restore import Restore
 
 path = str(Path(__file__).parent)
 

@@ -84,14 +84,14 @@ spec:
 # some_module.py
 # In this example we expect KUBECONFIG to be set and point to the OADP cluster 
 from openshift_resources.utils.openshift_resource_jinja2_based_builder import OpenshiftResourceJinja2BasedBuilder
-from openshift_resources.oadp.data_protection_application import DataProtectionApplication
+from openshift_resources.model.oadp import DataProtectionApplication
 
 dpa = OpenshiftResourceJinja2BasedBuilder(
-    resource_api_class=DataProtectionApplication,
-    template_folder="templates/",
-    namespace="openshift-adp")
-    .create(
-    name="dpa_name"
+  resource_api_class=DataProtectionApplication,
+  template_folder="templates/",
+  namespace="openshift-adp")
+.create(
+  name="dpa_name"
 template = "awsdpa.j2",
            enable_restic = True,
                            enable_csi = True,

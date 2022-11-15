@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 from kubernetes.client import ApiException
 
-from openshift_resources.velero.backup import Backup
+from openshift_resources.model.velero import Backup
 
 path = str(Path(__file__).parent)
 
