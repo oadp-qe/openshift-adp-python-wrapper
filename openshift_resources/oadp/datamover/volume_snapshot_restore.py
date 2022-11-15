@@ -5,6 +5,8 @@ from resources.io.k8s.apimachinery.pkg.apis.meta import v1 as metav1
 from resources.io.k8s.api.core import v1 as corev1
 
 from wrapper_constants.oadp.datamover.volume_snapshot_restore import VolumeSnapshotRestorePhase
+from wrapper_constants.resources import ApiGroups
+
 from .volume_snapshot_backup import PVCData
 from ...resource import BaseResource
 
@@ -19,6 +21,7 @@ class VSBRef(BaseModel):
     volumeSnapshotClassName: Optional[str] = Field(
         None, description='name of the VolumeSnapshotClass'
     )
+
 
 class VolumeSnapshotRestoreSpec(BaseModel):
     protectedNamespace: Optional[str] = Field(
@@ -42,19 +45,9 @@ class VolumeSnapshotRestoreStatus(BaseModel):
 
 
 class VolumeSnapshotRestore(BaseResource):
-    apiVersion: Optional[str] = Field(
-        None,
-        description='APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources',
-    )
-    kind: Optional[str] = Field(
-        None,
-        description='Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds',
-    )
-    metadata: Optional[metav1.ObjectMeta] = Field(
-        None,
-        description="Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata",
-    )
-    spec: Optional[VolumeSnapshotRestoreSpec ] = Field(
+    api_group: Optional[str] = Field(ApiGroups.DATAMOVER_OADP_API_GROUP.value, exclude=True, repr=False)
+
+    spec: Optional[VolumeSnapshotRestoreSpec] = Field(
         None,
         description='VolumeSnapshotRestoreSpec defines the desired state of VolumeSnapshotRestore',
     )
@@ -81,3 +74,4 @@ class VolumeSnapshotRestoreList(BaseModel):
         None,
         description='Standard list metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds',
     )
+
