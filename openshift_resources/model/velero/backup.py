@@ -1,11 +1,8 @@
 from typing import List, Dict, Optional, Any
 
-from kubernetes.dynamic import DynamicClient
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from resources.io.k8s.apimachinery.pkg.apis.meta.v1 import LabelSelector, ObjectMeta
 
-from openshift_resources.resource import BaseResource
-from wrapper_constants.resources import ApiGroups
 from wrapper_constants.velero.backup import HookErrorMode, BackupPhase
 
 
@@ -116,7 +113,9 @@ class BackupStatus(BaseModel):
     warnings: Optional[int]
 
 
-class Backup(BaseResource):
-    api_group : Optional[str] = Field(ApiGroups.VELERO_API_GROUP.value, exclude=True, repr=False)
+class Backup(BaseModel):
+    apiVersion: Optional[str]
+    kind: Optional[str]
+    metadata: Optional[ObjectMeta]
     spec: Optional[BackupSpec]
     status: Optional[BackupStatus]
