@@ -1,5 +1,5 @@
+from oadp_constants.resources import ApiGroups
 from ocp_resources.resource import NamespacedResource
-from wrapper_constants.resources import ApiGroups
 
 
 class DataProtectionApplication(NamespacedResource):
