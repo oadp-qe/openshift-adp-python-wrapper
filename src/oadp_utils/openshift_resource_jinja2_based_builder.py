@@ -1,7 +1,5 @@
 import io
 import logging
-import os
-import subprocess
 
 from jinja2 import Environment, FileSystemLoader
 
