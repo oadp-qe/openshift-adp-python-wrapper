@@ -2,7 +2,7 @@ from ocp_resources.resource import NamespacedResource
 from oadp_constants.resources import ApiGroups
 
 
-class VolumeSnapshotLocation(NamespacedResource):
+class VolumeSnapshotRestore(NamespacedResource):
     api_group = ApiGroups.DATAMOVER_OADP_API_GROUP.value
 
     def is_done(self):
