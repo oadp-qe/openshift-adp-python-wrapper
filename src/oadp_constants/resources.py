@@ -5,6 +5,7 @@ class ApiGroups(Enum):
     OADP_API_GROUP = "oadp.openshift.io"
     VELERO_API_GROUP = "velero.io"
     DATAMOVER_OADP_API_GROUP = "datamover.oadp.openshift.io"
+    VOLUME_SNAPSHOT_CLASS = "snapshot.storage.k8s.io"
     VOLSYC_API_GROUOP = "volsync.backube"
 
 
