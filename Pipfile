@@ -1,0 +1,19 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+pytest = "*"
+kubernetes = "*"
+openshift = "*"
+openshift-python-wrapper = "*"
+ansible = "==4.4.0"
+ansible-runner = "*"
+pre-commit = "*"
+PyYAML = "*"
+
+[requires]
+python_version = "3"

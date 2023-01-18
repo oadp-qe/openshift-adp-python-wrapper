@@ -1,10 +1,15 @@
+import logging
+
 from oadp_constants.resources import ApiGroups
 from ocp_resources.resource import NamespacedResource
 from enum import Enum
 
+logger = logging.getLogger(__name__)
+
 
 class DataProtectionApplication(NamespacedResource):
     api_group = ApiGroups.OADP_API_GROUP.value
+
 
     class Condition(Enum):
         class Status(Enum):
@@ -25,5 +30,4 @@ class DataProtectionApplication(NamespacedResource):
             co.status == self.Condition.Status.value.TRUE.value
             for co in manifest.status.conditions
         )
-
 
