@@ -3,7 +3,7 @@ from enum import Enum
 from oadp_constants.resources import ApiGroups
 from ocp_resources.resource import NamespacedResource
 from oadp_utils.wait import wait_for
-from src.oadp_utils.phase import check_phase
+from oadp_utils.phase import check_phase
 
 
 class Backup(NamespacedResource):
