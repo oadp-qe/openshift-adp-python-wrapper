@@ -2,6 +2,8 @@ from enum import Enum
 
 from ocp_resources.resource import NamespacedResource
 from oadp_constants.resources import ApiGroups
+from oadp_utils.wait import wait_for
+from oadp_utils.phase import check_phase
 
 
 class Restore(NamespacedResource):
@@ -37,27 +39,50 @@ class Restore(NamespacedResource):
         Continue = 'Continue'
         Fail = 'Fail'
 
-    def check_phase(self, phase):
-        try:
-            manifest = self.instance
-        except Exception as e:
-            print(f'An error occurred: {e}')
-        return manifest.status.phase == phase
-
     def new(self):
-        return self.check_phase(self.RestorePhase.New.value)
+        return check_phase(self, self.RestorePhase.New.value)
 
     def failed_validation(self):
-        return self.check_phase(self.RestorePhase.FailedValidation.value)
+        return check_phase(self, self.RestorePhase.FailedValidation.value)
 
     def in_progress(self):
-        return self.check_phase(self.RestorePhase.InProgress.value)
+        return check_phase(self, self.RestorePhase.InProgress.value)
 
     def completed(self):
-        return self.check_phase(self.RestorePhase.Completed.value)
+        return check_phase(self, self.RestorePhase.Completed.value)
 
     def partially_failed(self):
-        return self.check_phase(self.RestorePhase.PartiallyFailed.value)
+        return check_phase(self, self.RestorePhase.PartiallyFailed.value)
 
     def failed(self):
-        return self.check_phase(self.RestorePhase.Failed.value)
+        return check_phase(self, self.RestorePhase.Failed.value)
+
+    def wait_for_success(self):
+        return wait_for(
+            condition_function=self.completed,
+            description=f"wait until {self.kind} gets completed, {self.name}",
+        )
+
+    def wait_for_failure(self):
+        return wait_for(
+            condition_function=self.failed,
+            description=f"wait until {self.kind} gets failed, {self.name}",
+        )
+
+    def wait_for_partial_failure(self):
+        return wait_for(
+            condition_function=self.partially_failed,
+            description=f"wait until {self.kind} gets partiallyFailed, {self.name}",
+        )
+
+    def wait_for_failed_validation(self):
+        return wait_for(
+            condition_function=self.failed_validation,
+            description=f"wait until {self.kind} gets failed due validation error, {self.name}",
+        )
+
+    def wait_for_in_progress(self):
+        return wait_for(
+            condition_function=self.in_progress,
+            description=f"wait until {self.kind} phase is InProgress, {self.name}",
+        )
