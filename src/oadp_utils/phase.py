@@ -1,5 +1,11 @@
-def check_phase(resource, phase):
+import logging
+logger = logging.getLogger(__name__)
+
+
+def check_phase(resource, expected_phase):
     try:
-        return resource.instance.status.phase == phase
+        current_phase = resource.instance.status.phase
+        logger.info(f"Current phase status is: {current_phase}")
+        return current_phase == expected_phase
     except AttributeError:
         return False
