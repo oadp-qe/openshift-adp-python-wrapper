@@ -12,7 +12,6 @@ logger = logging.getLogger(__name__)
 class DataProtectionApplication(NamespacedResource):
     api_group = ApiGroups.OADP_API_GROUP.value
 
-
     class Condition(Enum):
         class Status(Enum):
             TRUE = "True"
@@ -27,19 +26,19 @@ class DataProtectionApplication(NamespacedResource):
             manifest = self.instance
             logger.info(f"Current DPA condition status is {self.Condition.Status.value.TRUE.value} and condition type "
                         f"is {self.Condition.Type.value.RECONCILED.value}")
-        except Exception as e:
-            print(f'An error occurred: {e}')
+        except AttributeError:
+            return False
         return any(
             co.type == self.Condition.Type.value.RECONCILED.value and
             co.status == self.Condition.Status.value.TRUE.value
             for co in manifest.status.conditions
         )
 
-    def wait_for_success(self):
+    def wait_for_reconciled(self, wait_timeout=240, sleep=5):
         return wait_for(
             condition_function=self.reconciled,
             description=f"DPA condition status to be {self.Condition.Status.value.TRUE.value} and condition "
                         f"type to be {self.Condition.Type.value.RECONCILED.value}, {self.name}",
-            sleep=5,
-            wait_timeout=240
+            sleep=sleep,
+            wait_timeout=wait_timeout
         )

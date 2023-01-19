@@ -23,12 +23,26 @@ class Schedule(NamespacedResource):
     def failed_validation(self):
         return check_phase(self, self.SchedulePhase.FailedValidation.value)
 
-    def wait_for_new(self):
-        return wait_for(self.new, description=f"wait until schedule phase is New, {self.name}")
+    def wait_for_new(self, wait_timeout=200, sleep=5):
+        return wait_for(
+            self.new,
+            description=f"{self.kind} phase to become New, {self.name}",
+            wait_timeout=wait_timeout,
+            sleep=sleep
+        )
 
-    def wait_for_enabled(self):
-        return wait_for(self.enabled, description=f"wait until schedule phase gets enabled, {self.name}")
+    def wait_for_enabled(self, wait_timeout=200, sleep=5):
+        return wait_for(
+            self.enabled,
+            description=f"{self.kind} phase to become enabled, {self.name}",
+            wait_timeout=wait_timeout,
+            sleep=sleep
+        )
 
-    def wait_for_failed_validation(self):
-        return wait_for(self.failed_validation, description=f"wait until schedule gets failed due to validation error "
-                                                            f"{self.name}")
+    def wait_for_failed_validation(self, wait_timeout=200, sleep=5):
+        return wait_for(
+            self.failed_validation,
+            description=f"{self.kind} phase to become failed_validation {self.name}",
+            wait_timeout=wait_timeout,
+            sleep=sleep
+        )
