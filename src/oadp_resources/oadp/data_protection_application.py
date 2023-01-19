@@ -25,6 +25,8 @@ class DataProtectionApplication(NamespacedResource):
     def reconciled(self):
         try:
             manifest = self.instance
+            logger.info(f"Current DPA condition status is {self.Condition.Status.value.TRUE.value} and condition type "
+                        f"is {self.Condition.Type.value.RECONCILED.value}")
         except Exception as e:
             print(f'An error occurred: {e}')
         return any(
@@ -36,8 +38,8 @@ class DataProtectionApplication(NamespacedResource):
     def wait_for_success(self):
         return wait_for(
             condition_function=self.reconciled,
-            description=f"DPA condition status is {self.Condition.Status.value.TRUE.value} and condition "
-                        f"type is {self.Condition.Type.value.RECONCILED.value}, {self.name}",
-            sleep=2,
+            description=f"DPA condition status to be {self.Condition.Status.value.TRUE.value} and condition "
+                        f"type to be {self.Condition.Type.value.RECONCILED.value}, {self.name}",
+            sleep=5,
             wait_timeout=240
         )
