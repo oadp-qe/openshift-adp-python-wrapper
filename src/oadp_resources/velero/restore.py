@@ -57,32 +57,42 @@ class Restore(NamespacedResource):
     def failed(self):
         return check_phase(self, self.RestorePhase.Failed.value)
 
-    def wait_for_success(self):
+    def wait_for_success(self, wait_timeout=240, sleep=5):
         return wait_for(
             condition_function=self.completed,
-            description=f"wait until {self.kind} gets completed, {self.name}",
+            description=f"{self.kind} phase to become completed, {self.name}",
+            wait_timeout=wait_timeout,
+            sleep=sleep
         )
 
-    def wait_for_failure(self):
+    def wait_for_failure(self, wait_timeout=200, sleep=5):
         return wait_for(
             condition_function=self.failed,
-            description=f"wait until {self.kind} gets failed, {self.name}",
+            description=f"{self.kind} phase to become failed, {self.name}",
+            wait_timeout=wait_timeout,
+            sleep=sleep
         )
 
-    def wait_for_partial_failure(self):
+    def wait_for_partial_failure(self, wait_timeout=200, sleep=5):
         return wait_for(
             condition_function=self.partially_failed,
-            description=f"wait until {self.kind} gets partiallyFailed, {self.name}",
+            description=f"{self.kind} phase to become partiallyFailed, {self.name}",
+            wait_timeout=wait_timeout,
+            sleep=sleep
         )
 
-    def wait_for_failed_validation(self):
+    def wait_for_failed_validation(self, wait_timeout=200, sleep=5):
         return wait_for(
             condition_function=self.failed_validation,
-            description=f"wait until {self.kind} gets failed due validation error, {self.name}",
+            description=f"{self.kind} phase to become failed_validation, {self.name}",
+            wait_timeout=wait_timeout,
+            sleep=sleep
         )
 
-    def wait_for_in_progress(self):
+    def wait_for_in_progress(self, wait_timeout=200, sleep=1):
         return wait_for(
             condition_function=self.in_progress,
-            description=f"wait until {self.kind} phase is InProgress, {self.name}",
+            description=f"{self.kind} phase to become InProgress, {self.name}",
+            wait_timeout=wait_timeout,
+            sleep=sleep
         )
