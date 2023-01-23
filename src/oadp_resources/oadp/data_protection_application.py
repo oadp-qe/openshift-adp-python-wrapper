@@ -4,7 +4,7 @@ from oadp_constants.resources import ApiGroups
 from ocp_resources.resource import NamespacedResource
 from enum import Enum
 
-from utils.common import wait_for
+from oadp_utils.wait import wait_for
 
 logger = logging.getLogger(__name__)
 
