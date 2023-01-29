@@ -9,7 +9,7 @@ from oadp_resources.volsync.replication_source import ReplicationSource
 logger = logging.getLogger(__name__)
 
 
-class VolumeSnapshotLocation(NamespacedResource):
+class VolumeSnapshotBackup(NamespacedResource):
     api_group = ApiGroups.DATAMOVER_OADP_API_GROUP.value
 
     def replication_source_completed(self):
@@ -36,19 +36,19 @@ class VolumeSnapshotLocation(NamespacedResource):
     @classmethod
     def get_by_backup_name(cls, backup_name):
         """
-        Returns a list of VSRs by restore name
-        @param backup_name: the restore name to get the VSR/s by
-        @return: returns a list of VSR/s by restore name restore_name; empty list otherwise
+        Returns a list of VSBs by backup name
+        @param backup_name: the backup name to get the VSB/s by
+        @return: returns a list of VSB/s by backup name; empty list otherwise
         """
         return list(cls.get(label_selector=f"velero.io/restore-name={backup_name}"))
 
     @classmethod
     def get_by_source_pvc(cls, src_pvc_name: str, vsr_list: list = None):
         """
-        Returns a list of VSRs by source PVC
-        @param src_pvc_name: PVC name which the VSR/s point to
-        @param vsr_list: the list of VSR/s to filter based on the PVC name; in case not provided, it will be retrieved
-        @return: a list of VSRs by source PVC; empty list otherwise
+        Returns a list of VSBS by source PVC
+        @param src_pvc_name: PVC name which the VSB/s point to
+        @param vsr_list: the list of VSB/s to filter based on the PVC name; in case not provided, it will be retrieved
+        @return: a list of VSBs by source PVC; empty list otherwise
         """
         if not vsr_list:
             vsr_list = list(cls.get())
