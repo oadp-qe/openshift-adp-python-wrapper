@@ -1,9 +1,9 @@
 from oadp_constants.resources import ApiGroups
-from ocp_resources.resource import NamespacedResource
+from ocp_resources.resource import Resource
 from enum import Enum
 
 
-class VolumeSnapshotClass(NamespacedResource):
+class VolumeSnapshotClass(Resource):
     api_group = ApiGroups.VOLUME_SNAPSHOT_CLASS.value
 
     class Platform(Enum):
