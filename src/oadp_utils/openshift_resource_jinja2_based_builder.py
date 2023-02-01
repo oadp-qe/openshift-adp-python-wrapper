@@ -3,6 +3,7 @@ import logging
 
 from jinja2 import Environment, FileSystemLoader
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -18,7 +19,7 @@ class OpenshiftResourceJinja2BasedBuilder:
         namespace: for all resource created by an instance of this class
     """
 
-    def __init__(self, resource_api_class, template_folder, namespace):
+    def __init__(self, resource_api_class, template_folder, namespace=None):
         self.environment = Environment(loader=FileSystemLoader(template_folder))
         self.resource_api_class = resource_api_class
         self.namespace = namespace
@@ -28,18 +29,21 @@ class OpenshiftResourceJinja2BasedBuilder:
                template,
                **kwargs):
         kwargs["name"] = name
-        kwargs["namespace"] = self.namespace
+        if self.namespace:
+            kwargs["namespace"] = self.namespace
 
         resource_yaml_str = self.environment.get_template(name=template).render((), **kwargs)
         logger.info(f"Creating {self.resource_api_class.kind}/{name}")
         logger.info(resource_yaml_str)
-        resource_api = self.resource_api_class(
-            # do not remove.
-            name=name,
-            namespace=self.namespace,
-            #
-            yaml_file=io.StringIO(resource_yaml_str))
 
+        resource_api_kwargs = {
+            "name": name,
+            "yaml_file": io.StringIO(resource_yaml_str)
+        }
+        if self.namespace:
+            resource_api_kwargs["namespace"] = self.namespace
+
+        resource_api = self.resource_api_class(**resource_api_kwargs)
         resource_api.create(wait=True)
 
         return resource_api
