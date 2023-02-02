@@ -15,74 +15,74 @@ class Backup(NamespacedResource):
 
         # New means the backup has been created but not
         # yet processed by the BackupController.
-        New = "New"
+        NEW = "New"
 
         # FailedValidation means the backup has failed
         # the controller's validations and therefore will not run.
-        FailedValidation = "FailedValidation"
+        FAILED_VALIDATION = "FailedValidation"
 
         # InProgress means the backup is currently executing.
-        InProgress = "InProgress"
+        IN_PROGRESS = "InProgress"
 
         # Uploading means the backups of Kubernetes resources
         # and creation of snapshots was successful and snapshot data
         # is currently uploading.  The backup is not usable yet.
-        Uploading = "Uploading"
+        UPLOADING = "Uploading"
 
         # UploadingPartialFailure means the backup of Kubernetes
         # resources and creation of snapshots partially failed (final phase
         # will be PartiallyFailed) and snapshot data is currently uploading.
         # The backup is not usable yet.
-        UploadingPartialFailure = "UploadingPartialFailure"
+        UPLOADING_PARTIAL_FAILURE = "UploadingPartialFailure"
 
         # Completed means the backup has run successfully without
         # errors.
-        Completed = "Completed"
+        COMPLETED = "Completed"
 
         # PartiallyFailed means the backup has run to completion
         # but encountered 1+ errors backing up individual items.
-        PartiallyFailed = "PartiallyFailed"
+        PARTIALLY_FAILED = "PartiallyFailed"
 
         # Failed means the backup ran but encountered an error that
         # prevented it from completing successfully.
-        Failed = "Failed"
+        FAILED = "Failed"
 
         # Deleting means the backup and all its associated data are being deleted.
-        Deleting = "Deleting"
+        DELETING = "Deleting"
 
     class HookErrorMode(Enum):
-        Continue = "Continue"
+        CONTINUE = "Continue"
 
         # Fail means that an error from a hook is problematic, and the backup should be in
         # error.
-        Fail = "Fail"
+        FAIL = "Fail"
 
     def new(self):
-        return check_phase(self, self.BackupPhase.New.value)
+        return check_phase(self, self.BackupPhase.NEW.value)
 
     def failed_validation(self):
-        return check_phase(self, self.BackupPhase.FailedValidation.value)
+        return check_phase(self, self.BackupPhase.FAILED_VALIDATION.value)
 
     def in_progress(self):
-        return check_phase(self, self.BackupPhase.InProgress.value)
+        return check_phase(self, self.BackupPhase.IN_PROGRESS.value)
 
     def uploading(self):
-        return check_phase(self, self.BackupPhase.Uploading.value)
+        return check_phase(self, self.BackupPhase.UPLOADING.value)
 
     def uploading_partial_failure(self):
-        return check_phase(self, self.BackupPhase.UploadingPartialFailure.value)
+        return check_phase(self, self.BackupPhase.UPLOADING_PARTIAL_FAILURE.value)
 
     def completed(self):
-        return check_phase(self, self.BackupPhase.Completed.value)
+        return check_phase(self, self.BackupPhase.COMPLETED.value)
 
     def partially_failed(self):
-        return check_phase(self, self.BackupPhase.PartiallyFailed.value)
+        return check_phase(self, self.BackupPhase.PARTIALLY_FAILED.value)
 
     def failed(self):
-        return check_phase(self, self.BackupPhase.Failed.value)
+        return check_phase(self, self.BackupPhase.FAILED.value)
 
     def deleting(self):
-        return check_phase(self, self.BackupPhase.Deleting.value)
+        return check_phase(self, self.BackupPhase.DELETING.value)
 
     def wait_for_success(self, wait_timeout=240, sleep=5):
         return wait_for(

@@ -14,48 +14,48 @@ class Restore(NamespacedResource):
     class RestorePhase(Enum):
         # New means the restore has been created but not
         # yet processed by the RestoreController.
-        New = 'New'
+        NEW = 'New'
 
         # FailedValidation means the restore has failed
         # the controller's validations and therefore will not run.
-        FailedValidation = 'FailedValidation'
+        FAILED_VALIDATION = 'FailedValidation'
 
         # InProgress means the restore is currently executing.
-        InProgress = 'InProgress'
+        IN_PROGRESS = 'InProgress'
 
         # Completed means the restore has run successfully without
         # errors.
-        Completed = 'Completed'
+        COMPLETED = 'Completed'
 
         # PartiallyFailed means the restore has run to completion
         # but encountered 1+ errors restoring up individual items.
-        PartiallyFailed = 'PartiallyFailed'
+        PARTIALLY_FAILED = 'PartiallyFailed'
 
         # Failed means the restore ran but encountered an error that
         # prevented it from completing successfully.
-        Failed = 'Failed'
+        FAILED = 'Failed'
 
     class HookErrorMode(Enum):
-        Continue = 'Continue'
-        Fail = 'Fail'
+        CONTINUE = 'Continue'
+        FAIL = 'Fail'
 
     def new(self):
-        return check_phase(self, self.RestorePhase.New.value)
+        return check_phase(self, self.RestorePhase.NEW.value)
 
     def failed_validation(self):
-        return check_phase(self, self.RestorePhase.FailedValidation.value)
+        return check_phase(self, self.RestorePhase.FAILED_VALIDATION.value)
 
     def in_progress(self):
-        return check_phase(self, self.RestorePhase.InProgress.value)
+        return check_phase(self, self.RestorePhase.IN_PROGRESS.value)
 
     def completed(self):
-        return check_phase(self, self.RestorePhase.Completed.value)
+        return check_phase(self, self.RestorePhase.COMPLETED.value)
 
     def partially_failed(self):
-        return check_phase(self, self.RestorePhase.PartiallyFailed.value)
+        return check_phase(self, self.RestorePhase.PARTIALLY_FAILED.value)
 
     def failed(self):
-        return check_phase(self, self.RestorePhase.Failed.value)
+        return check_phase(self, self.RestorePhase.FAILED.value)
 
     def wait_for_success(self, wait_timeout=240, sleep=5):
         return wait_for(

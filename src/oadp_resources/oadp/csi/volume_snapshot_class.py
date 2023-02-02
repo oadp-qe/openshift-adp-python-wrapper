@@ -8,34 +8,34 @@ class VolumeSnapshotClass(Resource):
 
     class Platform(Enum):
         class Aws(Enum):
-            Provider = "aws"
-            Driver = "ebs.csi.aws.com"
+            PROVIDER = "aws"
+            DRIVER = "ebs.csi.aws.com"
 
         class Gcp(Enum):
-            Provider = "gcp"
-            Driver = "pd.csi.storage.gke.io"
+            PROVIDER = "gcp"
+            DRIVER = "pd.csi.storage.gke.io"
 
         class Azure(Enum):
-            Provider = "azure"
-            Driver = "disk.csi.azure.com"
+            PROVIDER = "azure"
+            DRIVER = "disk.csi.azure.com"
 
         class Osp(Enum):
-            Provider = "osp"
-            Driver = "openshift-storage.rbd.csi.ceph.com"
+            PROVIDER = "osp"
+            DRIVER = "openshift-storage.rbd.csi.ceph.com"
 
         class Ibm(Enum):
-            Provider = "osp"
-            Driver = "openshift-storage.cephfs.csi.ceph.com"
+            PROVIDER = "osp"
+            DRIVER = "openshift-storage.cephfs.csi.ceph.com"
 
     @classmethod
     def get_csi_driver_by_provider(cls, provider):
-        if provider == cls.Platform.Aws.value.Provider.value:
-            return cls.Platform.Aws.value.Driver.value
-        elif provider == cls.Platform.Gcp.value.Provider.value:
-            return cls.Platform.Gcp.value.Driver.value
-        elif provider == cls.Platform.Azure.value.Provider.value:
-            return cls.Platform.Azure.value.Driver.value
-        elif provider == cls.Platform.Osp.value.Provider.value:
-            return cls.Platform.Osp.value.Driver.value
-        elif provider == cls.Platform.Ibm.value.Provider.value:
-            return cls.Platform.Ibm.value.Driver.value
+        if provider == cls.Platform.Aws.value.PROVIDER.value:
+            return cls.Platform.Aws.value.DRIVER.value
+        elif provider == cls.Platform.Gcp.value.PROVIDER.value:
+            return cls.Platform.Gcp.value.DRIVER.value
+        elif provider == cls.Platform.Azure.value.PROVIDER.value:
+            return cls.Platform.Azure.value.DRIVER.value
+        elif provider == cls.Platform.Osp.value.PROVIDER.value:
+            return cls.Platform.Osp.value.DRIVER.value
+        elif provider == cls.Platform.Ibm.value.PROVIDER.value:
+            return cls.Platform.Ibm.value.DRIVER.value
