@@ -7,4 +7,4 @@ logger = logging.getLogger(__name__)
 
 
 class ReplicationDestination(NamespacedResource):
-    api_group = ApiGroups.VOLSYC_API_GROUOP
+    api_group = ApiGroups.VOLSYC_API_GROUOP.value
