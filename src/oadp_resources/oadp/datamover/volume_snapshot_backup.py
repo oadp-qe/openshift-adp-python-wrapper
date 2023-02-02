@@ -1,9 +1,9 @@
 import logging
+from enum import Enum
 
 from ocp_resources.resource import NamespacedResource
 from oadp_constants.resources import ApiGroups
 
-from oadp_constants.oadp.datamover.volume_snapshot_backup import VolumeSnapshotBackupPhase
 from oadp_resources.volsync.replication_source import ReplicationSource
 from oadp_utils.wait import wait_for
 
@@ -12,6 +12,17 @@ logger = logging.getLogger(__name__)
 
 class VolumeSnapshotBackup(NamespacedResource):
     api_group = ApiGroups.DATAMOVER_OADP_API_GROUP.value
+
+    class VolumeSnapshotBackupPhase(Enum):
+        SNAPSHOT_BACKUP_DONE = "SnapshotBackupDone"
+
+        COMPLETED = "Completed"
+
+        IN_PROGRESS = "InProgress"
+
+        FAILED = "Failed"
+
+        PARTIALLY_FAILED = "PartiallyFailed"
 
     def replication_source_completed(self):
         try:
@@ -34,7 +45,7 @@ class VolumeSnapshotBackup(NamespacedResource):
         """
         vsb_status = self.instance.status
         return vsb_status and vsb_status.phase != \
-            VolumeSnapshotBackupPhase.SnapMoverBackupPhaseInProgress.value
+            self.VolumeSnapshotBackupPhase.IN_PROGRESS.value
 
     @classmethod
     def get_by_backup_name(cls, backup_name):
