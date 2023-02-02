@@ -10,18 +10,18 @@ class Schedule(NamespacedResource):
     api_group = ApiGroups.VELERO_API_GROUP.value
 
     class SchedulePhase(Enum):
-        New = 'New'
-        Enabled = 'Enabled'
-        FailedValidation = 'FailedValidation'
+        NEW = 'New'
+        ENABLED = 'Enabled'
+        FAILED_VALIDATION = 'FailedValidation'
 
     def enabled(self):
-        return check_phase(self, self.SchedulePhase.Enabled.value)
+        return check_phase(self, self.SchedulePhase.ENABLED.value)
 
     def new(self):
-        return check_phase(self, self.SchedulePhase.New.value)
+        return check_phase(self, self.SchedulePhase.NEW.value)
 
     def failed_validation(self):
-        return check_phase(self, self.SchedulePhase.FailedValidation.value)
+        return check_phase(self, self.SchedulePhase.FAILED_VALIDATION.value)
 
     def wait_for_new(self, wait_timeout=200, sleep=5):
         return wait_for(

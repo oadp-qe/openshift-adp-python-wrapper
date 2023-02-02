@@ -10,18 +10,18 @@ class BackupStorageLocation(NamespacedResource):
     api_group = ApiGroups.VELERO_API_GROUP.value
 
     class BackupStorageLocationAccessMode(Enum):
-        BackupStorageLocationAccessModeReadOnly = 'ReadOnly'
-        BackupStorageLocationAccessModeReadWrite = 'ReadWrite'
+        READ_ONLY = 'ReadOnly'
+        READ_WRITE = 'ReadWrite'
 
     class BackupStorageLocationPhase(Enum):
-        Available = 'Available'
-        Unavailable = 'Unavailable'
+        AVAILABLE = 'Available'
+        UNAVAILABLE = 'Unavailable'
 
     def available(self):
-        return check_phase(self, self.BackupStorageLocationPhase.Available.value)
+        return check_phase(self, self.BackupStorageLocationPhase.AVAILABLE.value)
 
     def unavailable(self):
-        return check_phase(self, self.BackupStorageLocationPhase.Unavailable.value)
+        return check_phase(self, self.BackupStorageLocationPhase.UNAVAILABLE.value)
 
     def wait_for_bsl_status_available(self, wait_timeout=200, sleep=5):
         return wait_for(
