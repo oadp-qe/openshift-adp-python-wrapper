@@ -1,9 +1,9 @@
 import logging
+from enum import Enum
 
 from ocp_resources.resource import NamespacedResource
 from src.oadp_constants.resources import ApiGroups
 
-from src.oadp_constants.oadp.datamover.volume_snapshot_restore import VolumeSnapshotRestorePhase
 from src.oadp_resources.volsync.replication_destination import ReplicationDestination
 
 logger = logging.getLogger(__name__)
@@ -11,6 +11,17 @@ logger = logging.getLogger(__name__)
 
 class VolumeSnapshotRestore(NamespacedResource):
     api_group = ApiGroups.DATAMOVER_OADP_API_GROUP.value
+
+    class VolumeSnapshotRestorePhase(Enum):
+        SNAPSHOT_BACKUP_DONE = "SnapshotBackupDone"
+
+        COMPLETED = "Completed"
+
+        IN_PROGRESS = "InProgress"
+
+        FAILED = "Failed"
+
+        PARTIALLY_FAILED = "PartiallyFailed"
 
     def replication_destination_completed(self):
         try:
@@ -31,7 +42,7 @@ class VolumeSnapshotRestore(NamespacedResource):
         @return: True if the VSR process is not running; False otherwise
         """
         return self.instance.status and self.instance.status.phase != \
-            VolumeSnapshotRestorePhase.SnapMoverRestorePhaseInProgress.value
+            self.VolumeSnapshotRestorePhase.IN_PROGRESS.value
 
     @classmethod
     def get_by_restore_name(cls, restore_name):
