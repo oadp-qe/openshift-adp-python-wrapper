@@ -7,7 +7,7 @@ from datetime import timedelta
 logger = logging.getLogger(__name__)
 
 
-def wait_for(condition_function, description="Something", wait_timeout=200, sleep=5):
+def wait_for(condition_function, description="Something", wait_timeout=200, sleep=5, **func_kwargs):
     """
     Providing a way to wait for any function to return true.
 
@@ -22,10 +22,10 @@ def wait_for(condition_function, description="Something", wait_timeout=200, slee
     """
     logger.info(f"Waiting For {description}, any status information should be logged by your condition_function! ")
     timeout = datetime.now() + timedelta(seconds=wait_timeout)
-    while datetime.now() < timeout and not condition_function():
+    while datetime.now() < timeout and not condition_function(**func_kwargs):
         time.sleep(sleep)
 
-    if not condition_function():
+    if not condition_function(**func_kwargs):
         logger.info(f"Waiting For {description}-TIMEOUT")
         raise TimeoutError
     logger.info(f"Waiting For {description}-OK")
