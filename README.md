@@ -2,9 +2,13 @@
 
 Manage Openshift adp Custom Resources 
 
+Depened on:
+
+https://github.com/RedHatQE/openshift-python-wrapper
+
+
 Read more about OADP
 
-https://access.redhat.com/articles/5456281
 
 
 ## Installation
