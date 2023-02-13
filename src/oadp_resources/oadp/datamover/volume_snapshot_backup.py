@@ -5,7 +5,7 @@ from ocp_resources.resource import NamespacedResource
 from oadp_constants.resources import ApiGroups
 
 from oadp_resources.volsync.replication_source import ReplicationSource
-from oadp_utils.wait import wait_for
+from oadp_utils.phase import check_phase
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +23,21 @@ class VolumeSnapshotBackup(NamespacedResource):
         FAILED = "Failed"
 
         PARTIALLY_FAILED = "PartiallyFailed"
+
+    def snapshot_backup_done(self):
+        return check_phase(self, self.VolumeSnapshotBackupPhase.SNAPSHOT_BACKUP_DONE.value)
+
+    def completed(self):
+        return check_phase(self, self.VolumeSnapshotBackupPhase.COMPLETED.value)
+
+    def in_progress(self):
+        return check_phase(self, self.VolumeSnapshotBackupPhase.IN_PROGRESS.value)
+
+    def failed(self):
+        return check_phase(self, self.VolumeSnapshotBackupPhase.FAILED.value)
+
+    def partially_failed(self):
+        return check_phase(self, self.VolumeSnapshotBackupPhase.PARTIALLY_FAILED.value)
 
     def replication_source_completed(self):
         try:
@@ -43,9 +58,7 @@ class VolumeSnapshotBackup(NamespacedResource):
         Check is VSB process is done
         @return: True if the VSB process is not running; False otherwise
         """
-        vsb_status = self.instance.status
-        return vsb_status and vsb_status.phase != \
-            self.VolumeSnapshotBackupPhase.IN_PROGRESS.value
+        return not self.in_progress()
 
     @classmethod
     def get_by_backup_name(cls, backup_name):
@@ -57,7 +70,7 @@ class VolumeSnapshotBackup(NamespacedResource):
         vsbl = list(cls.get(label_selector=f"velero.io/backup-name={backup_name}"))
 
         if len(vsbl) == 0:
-            logger.error(f"No VSB was created for backup {backup_name}")
+            logger.info(f"No VSB was created for backup {backup_name}")
 
         return vsbl
 
@@ -76,22 +89,23 @@ class VolumeSnapshotBackup(NamespacedResource):
 
         vsbl_size = len(vsb_filtered_list)
         if vsbl_size > 1:
-            logger.error(f"More than one VSB was found with source PVC name {src_pvc_name}")
+            logger.info(f"More than one VSB was found with source PVC name {src_pvc_name}")
 
         if vsbl_size == 0:
-            logger.error(f"No VSB was found with source PVC name {src_pvc_name}")
+            logger.info(f"No VSB was found with source PVC name {src_pvc_name}")
+            return vsb_filtered_list
 
-        return vsb_filtered_list[0]
+        return vsb_filtered_list
 
     def get_replication_source(self):
         replication_source_list = ReplicationSource.get()
         rep_sr_list = [rd for rd in replication_source_list if
                        rd.labels.get("datamover.oadp.openshift.io/vsb") == self.name]
         if len(rep_sr_list) > 1:
-            logger.error(f"There are more than one ReplicationSource for VSB {self.name}")
+            logger.info(f"There are more than one ReplicationSource for VSB {self.name}")
             return None
         if len(rep_sr_list) == 0:
-            logger.error(f"ReplicationSource was not created for VSB {self.name}")
+            logger.info(f"ReplicationSource was not created for VSB {self.name}")
             return None
 
         return rep_sr_list[0]
@@ -99,7 +113,7 @@ class VolumeSnapshotBackup(NamespacedResource):
     def wait_for_done(self, wait_timeout=240, sleep=5):
         return wait_for(
             condition_function=self.done,
-            description=f"{self.kind} to done, {self.name}",
+            description=f"{self.kind} to be done, {self.name}",
             sleep=sleep,
             wait_timeout=wait_timeout
         )

@@ -5,6 +5,8 @@ from ocp_resources.resource import NamespacedResource
 from oadp_utils.wait import wait_for
 from oadp_utils.phase import check_phase
 
+from oadp_resources.oadp.datamover.volume_snapshot_backup import VolumeSnapshotBackup
+
 
 class Backup(NamespacedResource):
     api_group = ApiGroups.VELERO_API_GROUP.value
@@ -84,6 +86,9 @@ class Backup(NamespacedResource):
     def deleting(self):
         return check_phase(self, self.BackupPhase.DELETING.value)
 
+    def done(self):
+        return not ( self.in_progress() or self.new() )
+
     def wait_for_success(self, wait_timeout=240, sleep=5):
         return wait_for(
             condition_function=self.completed,
@@ -131,3 +136,17 @@ class Backup(NamespacedResource):
             sleep=sleep,
             wait_timeout=wait_timeout
         )
+
+    def wait_for_done(self, wait_timeout=200, sleep=1):
+        return wait_for(
+            condition_function=self.done,
+            description=f"{self.kind} backup to done, {self.name}",
+            sleep=sleep,
+            wait_timeout=wait_timeout
+        )
+
+    def vsb_exists(self):
+        vsbl = VolumeSnapshotBackup.get_by_backup_name(backup_name=self.name)
+        if len(vsbl) == 0:
+            return False
+        return True
