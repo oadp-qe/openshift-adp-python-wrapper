@@ -40,20 +40,6 @@ class VolumeSnapshotBackup(NamespacedResource):
     def partially_failed(self):
         return check_phase(self, self.VolumeSnapshotBackupPhase.PARTIALLY_FAILED.value)
 
-    def replication_source_completed(self):
-        try:
-            conditions = self.status.conditions
-        
-        # This will happen only if VSB has completed, and thus RS is removed from the ns
-        except AttributeError as e:
-            return True
-
-        return len(conditions) > 1 and \
-            conditions[0].type == "Reconciled" and \
-            conditions[0].type.status and \
-            conditions[1].type == "Synchronizing" and \
-            not conditions[1].status
-
     def done(self):
         """
         Check is VSB process is done
