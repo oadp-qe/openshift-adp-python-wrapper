@@ -6,6 +6,8 @@ from oadp_constants.resources import ApiGroups
 
 from oadp_resources.volsync.replication_source import ReplicationSource
 from oadp_utils.phase import check_phase
+from oadp_utils.phase import log_status
+
 
 logger = logging.getLogger(__name__)
 
@@ -58,6 +60,7 @@ class VolumeSnapshotBackup(NamespacedResource):
         Check is VSB process is done
         @return: True if the VSB process is not running; False otherwise
         """
+        log_status(self)
         return not self.in_progress()
 
     @classmethod

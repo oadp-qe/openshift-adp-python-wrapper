@@ -9,3 +9,8 @@ def check_phase(resource, expected_phase):
         return current_phase == expected_phase
     except AttributeError:
         return False
+
+
+def log_status(resource):
+    logger.info(f"The status of {resource.kind}/{resource.name} is:")
+    logger.info(f"\n{resource.instance.status}\n")
