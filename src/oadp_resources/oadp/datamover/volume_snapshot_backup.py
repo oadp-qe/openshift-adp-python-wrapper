@@ -7,6 +7,7 @@ from oadp_constants.resources import ApiGroups
 from oadp_resources.volsync.replication_source import ReplicationSource
 from oadp_utils.phase import check_phase
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -100,7 +101,7 @@ class VolumeSnapshotBackup(NamespacedResource):
     def get_replication_source(self):
         replication_source_list = ReplicationSource.get()
         rep_sr_list = [rd for rd in replication_source_list if
-                       rd.labels.get("datamover.oadp.openshift.io/vsb") == self.name]
+                       rd.labels.get(ReplicationSource.Label.VOLUME_SNAPSHOT_BACKUP.value) == self.name]
         if len(rep_sr_list) > 1:
             logger.info(f"There are more than one ReplicationSource for VSB {self.name}")
             return None
