@@ -4,7 +4,7 @@ from enum import Enum
 from oadp_constants.resources import ApiGroups
 from ocp_resources.resource import NamespacedResource
 
-from src.oadp_utils.phase import log_status
+from oadp_utils.phase import log_status
 
 logger = logging.getLogger(__name__)
 
