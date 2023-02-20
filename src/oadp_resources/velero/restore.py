@@ -99,3 +99,9 @@ class Restore(NamespacedResource):
             wait_timeout=wait_timeout,
             sleep=sleep
         )
+
+    def vsr_exists(self, resource_class):
+        vsrl = resource_class.get_by_restore_name(restore_name=self.name)
+        if len(vsrl) == 0:
+            return False
+        return True

@@ -5,7 +5,6 @@ from ocp_resources.resource import NamespacedResource
 from oadp_utils.wait import wait_for
 from oadp_utils.phase import check_phase
 
-from oadp_resources.oadp.datamover.volume_snapshot_backup import VolumeSnapshotBackup
 
 from oadp_utils.phase import log_status
 
@@ -151,8 +150,8 @@ class Backup(NamespacedResource):
             wait_timeout=wait_timeout
         )
 
-    def vsb_exists(self):
-        vsbl = VolumeSnapshotBackup.get_by_backup_name(backup_name=self.name)
+    def vsb_exists(self, resource_class):
+        vsbl = resource_class.get_by_backup_name(backup_name=self.name)
         if len(vsbl) == 0:
             return False
         return True
