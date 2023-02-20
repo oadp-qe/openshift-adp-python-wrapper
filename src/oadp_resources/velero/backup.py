@@ -7,6 +7,8 @@ from oadp_utils.phase import check_phase
 
 from oadp_resources.oadp.datamover.volume_snapshot_backup import VolumeSnapshotBackup
 
+from src.oadp_utils.phase import log_status
+
 
 class Backup(NamespacedResource):
     api_group = ApiGroups.VELERO_API_GROUP.value
@@ -87,6 +89,7 @@ class Backup(NamespacedResource):
         return check_phase(self, self.BackupPhase.DELETING.value)
 
     def done(self):
+        log_status(self)
         return not ( self.in_progress() or self.new() )
 
     def wait_for_success(self, wait_timeout=240, sleep=5):
