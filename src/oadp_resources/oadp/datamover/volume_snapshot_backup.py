@@ -95,7 +95,8 @@ class VolumeSnapshotBackup(NamespacedResource):
             logger.info(f"There are more than one ReplicationSource for VSB {self.name}")
             return None
         if len(rep_sr_list) == 0:
-            logger.info(f"ReplicationSource was not created for VSB {self.name}")
+            logger.info(f"ReplicationSource was not created for VSB {self.name} or it was already deleted by the "
+                        f"controller")
             return None
 
         return rep_sr_list[0]
