@@ -8,7 +8,7 @@ from oadp_resources.volsync.replication_source import ReplicationSource
 from oadp_utils.phase import check_phase
 from oadp_utils.phase import log_status
 
-from src.oadp_resources.velero.backup import Backup
+from oadp_resources.velero.backup import Backup
 
 logger = logging.getLogger(__name__)
 
