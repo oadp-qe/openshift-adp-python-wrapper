@@ -4,6 +4,8 @@ from enum import Enum
 from oadp_constants.resources import ApiGroups
 from ocp_resources.resource import NamespacedResource
 
+from src.oadp_utils.phase import log_status
+
 logger = logging.getLogger(__name__)
 
 
@@ -27,6 +29,7 @@ class ReplicationSource(NamespacedResource):
        boolean: True if ReplicationSource CR status is reconciled or Synchronizing, False otherwise.
        """
         try:
+            log_status(self)
             conditions = self.instance.status.conditions
             conditions_size = len(conditions)
             rs_synchronizing_status = str()
