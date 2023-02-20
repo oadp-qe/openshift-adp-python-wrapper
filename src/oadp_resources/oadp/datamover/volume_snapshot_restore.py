@@ -89,7 +89,15 @@ class VolumeSnapshotRestore(NamespacedResource):
         if not vsr_list:
             vsr_list = list(cls.get())
         vsr_filtered_list = list(filter(
-            lambda x: x.instance.spec.volumeSnapshotMoverBackupRef.sourcePVCData.name == src_pvc_name, vsr_list))
+            lambda x: x.instance.status.sourcePVCData.name == src_pvc_name, vsr_list))
+
+        vsrl_size = len(vsr_filtered_list)
+        if vsrl_size > 1:
+            logger.info(f"More than one VSR was found with source PVC name {src_pvc_name}")
+
+        if vsrl_size == 0:
+            logger.info(f"No VSR was found with source PVC name {src_pvc_name}")
+            return vsr_filtered_list
 
         return vsr_filtered_list
 
