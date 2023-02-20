@@ -35,6 +35,9 @@ class Restore(NamespacedResource):
         # prevented it from completing successfully.
         FAILED = 'Failed'
 
+    class Label(Enum):
+        RESTORE = "velero.io/restore-name"
+
     class HookErrorMode(Enum):
         CONTINUE = 'Continue'
         FAIL = 'Fail'

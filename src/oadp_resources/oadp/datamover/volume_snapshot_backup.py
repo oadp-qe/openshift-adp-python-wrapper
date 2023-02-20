@@ -8,6 +8,7 @@ from oadp_resources.volsync.replication_source import ReplicationSource
 from oadp_utils.phase import check_phase
 from oadp_utils.phase import log_status
 
+from src.oadp_resources.velero.backup import Backup
 
 logger = logging.getLogger(__name__)
 
@@ -56,7 +57,7 @@ class VolumeSnapshotBackup(NamespacedResource):
         @param backup_name: the backup name to get the VSB/s by
         @return: returns a list of VSB/s by backup name; empty list otherwise
         """
-        vsbl = list(cls.get(label_selector=f"velero.io/backup-name={backup_name}"))
+        vsbl = list(cls.get(label_selector=f"{Backup.Label.BACKUP.value}={backup_name}"))
 
         if len(vsbl) == 0:
             logger.info(f"No VSB was created for backup {backup_name}")

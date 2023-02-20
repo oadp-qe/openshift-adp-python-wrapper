@@ -3,6 +3,7 @@ from enum import Enum
 
 from ocp_resources.resource import NamespacedResource
 from src.oadp_constants.resources import ApiGroups
+from src.oadp_resources.velero.restore import Restore
 
 from src.oadp_resources.volsync.replication_destination import ReplicationDestination
 from oadp_utils.phase import check_phase
@@ -70,7 +71,7 @@ class VolumeSnapshotRestore(NamespacedResource):
         @param restore_name: the restore name to get the VSR/s by
         @return: returns a list of VSR/s by restore name restore_name; empty list otherwise
         """
-        vsrl = list(cls.get(label_selector=f"velero.io/restore-name={restore_name}"))
+        vsrl = list(cls.get(label_selector=f"{Restore.Label.RESTORE.value}={restore_name}"))
 
         if len(vsrl) == 0:
             logger.info(f"No VSR was created for restore {restore_name}")

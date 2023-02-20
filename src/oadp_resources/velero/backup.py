@@ -54,6 +54,9 @@ class Backup(NamespacedResource):
         # Deleting means the backup and all its associated data are being deleted.
         DELETING = "Deleting"
 
+    class Label(Enum):
+        BACKUP = "velero.io/backup-name"
+
     class HookErrorMode(Enum):
         CONTINUE = "Continue"
 
