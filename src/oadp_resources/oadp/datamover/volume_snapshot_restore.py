@@ -7,6 +7,8 @@ from src.oadp_constants.resources import ApiGroups
 from src.oadp_resources.volsync.replication_destination import ReplicationDestination
 from oadp_utils.phase import check_phase
 
+from oadp_utils.phase import log_status
+
 logger = logging.getLogger(__name__)
 
 
@@ -58,8 +60,8 @@ class VolumeSnapshotRestore(NamespacedResource):
         Check is VSR process is done
         @return: True if the VSR process is not running; False otherwise
         """
-        return self.instance.status and self.instance.status.phase != \
-            self.VolumeSnapshotRestorePhase.IN_PROGRESS.value
+        log_status(self)
+        return not self.in_progress()
 
     @classmethod
     def get_by_restore_name(cls, restore_name):
