@@ -9,6 +9,7 @@ from oadp_utils.phase import check_phase
 from oadp_utils.phase import log_status
 
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -40,20 +41,6 @@ class VolumeSnapshotBackup(NamespacedResource):
 
     def partially_failed(self):
         return check_phase(self, self.VolumeSnapshotBackupPhase.PARTIALLY_FAILED.value)
-
-    def replication_source_completed(self):
-        try:
-            conditions = self.status.conditions
-        
-        # This will happen only if VSB has completed, and thus RS is removed from the ns
-        except AttributeError as e:
-            return True
-
-        return len(conditions) > 1 and \
-            conditions[0].type == "Reconciled" and \
-            conditions[0].type.status and \
-            conditions[1].type == "Synchronizing" and \
-            not conditions[1].status
 
     def done(self):
         """
@@ -103,7 +90,7 @@ class VolumeSnapshotBackup(NamespacedResource):
     def get_replication_source(self):
         replication_source_list = ReplicationSource.get()
         rep_sr_list = [rd for rd in replication_source_list if
-                       rd.labels.get("datamover.oadp.openshift.io/vsb") == self.name]
+                       rd.labels.get(ReplicationSource.Label.VOLUME_SNAPSHOT_BACKUP.value) == self.name]
         if len(rep_sr_list) > 1:
             logger.info(f"There are more than one ReplicationSource for VSB {self.name}")
             return None
