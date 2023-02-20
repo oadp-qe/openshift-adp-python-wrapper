@@ -7,7 +7,7 @@ from oadp_utils.phase import check_phase
 
 from oadp_resources.oadp.datamover.volume_snapshot_backup import VolumeSnapshotBackup
 
-from src.oadp_utils.phase import log_status
+from oadp_utils.phase import log_status
 
 
 class Backup(NamespacedResource):
