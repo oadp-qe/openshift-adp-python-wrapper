@@ -9,7 +9,6 @@ from oadp_utils.phase import check_phase
 from oadp_utils.phase import log_status
 
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -89,8 +88,8 @@ class VolumeSnapshotBackup(NamespacedResource):
 
     def get_replication_source(self):
         replication_source_list = ReplicationSource.get()
-        rep_sr_list = [rd for rd in replication_source_list if
-                       rd.labels.get(ReplicationSource.Label.VOLUME_SNAPSHOT_BACKUP.value) == self.name]
+        rep_sr_list = [rs for rs in replication_source_list if
+                       rs.labels.get(ReplicationSource.Label.VOLUME_SNAPSHOT_BACKUP.value) == self.name]
         if len(rep_sr_list) > 1:
             logger.info(f"There are more than one ReplicationSource for VSB {self.name}")
             return None

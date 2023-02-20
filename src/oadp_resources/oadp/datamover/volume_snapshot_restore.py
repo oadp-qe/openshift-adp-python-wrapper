@@ -24,17 +24,18 @@ class VolumeSnapshotRestore(NamespacedResource):
         PARTIALLY_FAILED = "PartiallyFailed"
 
     def replication_destination_completed(self):
-        try:
-            conditions = self.status.conditions
+        replication_destination_list = ReplicationDestination.get()
+        rep_ds_list = [rd for rd in replication_destination_list if
+                       rd.labels.get(ReplicationDestination.Label.VOLUME_SNAPSHOT_RESTORE.value) == self.name]
+        if len(rep_ds_list) > 1:
+            logger.info(f"There are more than one ReplicationDestination for VSR {self.name}")
+            return None
+        if len(rep_ds_list) == 0:
+            logger.info(f"ReplicationDestination was not created for VSR {self.name} or it was already deleted by the "
+                        f"controller")
+            return None
 
-        except AttributeError as e:
-            return False
-
-        return len(conditions) > 1 and \
-            conditions[0].type == "Reconciled" and \
-            conditions[0].type.status and \
-            conditions[1].type == "Synchronizing" and \
-            not conditions[1].status
+        return rep_ds_list[0]
 
     def done(self):
         """
