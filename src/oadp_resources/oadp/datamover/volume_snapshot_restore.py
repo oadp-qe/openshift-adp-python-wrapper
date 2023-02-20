@@ -70,7 +70,12 @@ class VolumeSnapshotRestore(NamespacedResource):
         @param restore_name: the restore name to get the VSR/s by
         @return: returns a list of VSR/s by restore name restore_name; empty list otherwise
         """
-        return list(cls.get(label_selector=f"velero.io/restore-name={restore_name}"))
+        vsrl = list(cls.get(label_selector=f"velero.io/restore-name={restore_name}"))
+
+        if len(vsrl) == 0:
+            logger.info(f"No VSR was created for restore {restore_name}")
+
+        return vsrl
 
     @classmethod
     def get_by_source_pvc(cls, src_pvc_name: str, vsr_list: list = None):
