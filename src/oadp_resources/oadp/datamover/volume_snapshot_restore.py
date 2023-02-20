@@ -113,3 +113,11 @@ class VolumeSnapshotRestore(NamespacedResource):
             return None
 
         return rep_ds_list[0]
+
+    def wait_for_done(self, wait_timeout=240, sleep=5):
+        return wait_for(
+            condition_function=self.done,
+            description=f"{self.kind} to be done, {self.name}",
+            sleep=sleep,
+            wait_timeout=wait_timeout
+        )
