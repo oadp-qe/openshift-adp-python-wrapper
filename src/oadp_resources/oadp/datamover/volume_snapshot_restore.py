@@ -5,6 +5,7 @@ from ocp_resources.resource import NamespacedResource
 from src.oadp_constants.resources import ApiGroups
 
 from src.oadp_resources.volsync.replication_destination import ReplicationDestination
+from oadp_utils.phase import check_phase
 
 logger = logging.getLogger(__name__)
 
@@ -13,7 +14,7 @@ class VolumeSnapshotRestore(NamespacedResource):
     api_group = ApiGroups.DATAMOVER_OADP_API_GROUP.value
 
     class VolumeSnapshotRestorePhase(Enum):
-        SNAPSHOT_BACKUP_DONE = "SnapshotBackupDone"
+        SNAPSHOT_RESTORE_DONE = "SnapshotRestoreDone"
 
         COMPLETED = "Completed"
 
@@ -22,6 +23,21 @@ class VolumeSnapshotRestore(NamespacedResource):
         FAILED = "Failed"
 
         PARTIALLY_FAILED = "PartiallyFailed"
+
+        def completed(self):
+            return check_phase(self, self.VolumeSnapshotRestorePhase.COMPLETED.value)
+
+        def snapshot_restore_done(self):
+            return check_phase(self, self.VolumeSnapshotRestorePhase.SNAPSHOT_RESTORE_DONE.value)
+
+        def in_progress(self):
+            return check_phase(self, self.VolumeSnapshotRestorePhase.IN_PROGRESS.value)
+
+        def failed(self):
+            return check_phase(self, self.VolumeSnapshotRestorePhase.FAILED.value)
+
+        def partially_failed(self):
+            return check_phase(self, self.VolumeSnapshotRestorePhase.PARTIALLY_FAILED.value)
 
     def replication_destination_completed(self):
         replication_destination_list = ReplicationDestination.get()
