@@ -6,6 +6,8 @@ from enum import Enum
 
 from oadp_utils.wait import wait_for
 
+from oadp_utils.phase import log_status
+
 logger = logging.getLogger(__name__)
 
 
@@ -23,16 +25,15 @@ class DataProtectionApplication(NamespacedResource):
 
     def reconciled(self):
         try:
-            manifest = self.instance
-            logger.info(f"Current DPA condition status is {self.DataProtectionApplicationCondition.Status.value.TRUE.value} and condition type "
-                        f"is {self.DataProtectionApplicationCondition.Type.value.RECONCILED.value}")
+            instance = self.instance
+            log_status(self)
+            return any(
+                co.type == self.DataProtectionApplicationCondition.Type.value.RECONCILED.value and
+                co.status == self.DataProtectionApplicationCondition.Status.value.TRUE.value
+                for co in instance.status.conditions
+            )
         except AttributeError:
             return False
-        return any(
-            co.type == self.DataProtectionApplicationCondition.Type.value.RECONCILED.value and
-            co.status == self.DataProtectionApplicationCondition.Status.value.TRUE.value
-            for co in manifest.status.conditions
-        )
 
     def wait_for_reconciled(self, wait_timeout=240, sleep=5):
         return wait_for(
