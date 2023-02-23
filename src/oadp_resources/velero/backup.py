@@ -9,6 +9,7 @@ from oadp_utils.phase import check_phase
 from oadp_utils.phase import log_status
 
 
+
 class Backup(NamespacedResource):
     api_group = ApiGroups.VELERO_API_GROUP.value
 
@@ -155,3 +156,12 @@ class Backup(NamespacedResource):
         if len(vsbl) == 0:
             return False
         return True
+
+    def wait_for_vsb(self, resource, wait_timeout=240, sleep=5):
+        return wait_for(
+            condition_function=self.vsb_exists,
+            description=f"VolumeSnapshotBackup resource to exist for the backup {self.name}",
+            sleep=sleep,
+            wait_timeout=wait_timeout,
+            resource_class=resource
+        )

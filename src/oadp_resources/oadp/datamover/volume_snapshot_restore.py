@@ -2,10 +2,10 @@ import logging
 from enum import Enum
 
 from ocp_resources.resource import NamespacedResource
-from src.oadp_constants.resources import ApiGroups
-from src.oadp_resources.velero.restore import Restore
+from oadp_constants.resources import ApiGroups
+from oadp_resources.velero.restore import Restore
 
-from src.oadp_resources.volsync.replication_destination import ReplicationDestination
+from oadp_resources.volsync.replication_destination import ReplicationDestination
 from oadp_utils.phase import check_phase
 
 from oadp_utils.phase import log_status
@@ -27,34 +27,20 @@ class VolumeSnapshotRestore(NamespacedResource):
 
         PARTIALLY_FAILED = "PartiallyFailed"
 
-        def completed(self):
-            return check_phase(self, self.VolumeSnapshotRestorePhase.COMPLETED.value)
+    def completed(self):
+        return check_phase(self, self.VolumeSnapshotRestorePhase.COMPLETED.value)
 
-        def snapshot_restore_done(self):
-            return check_phase(self, self.VolumeSnapshotRestorePhase.SNAPSHOT_RESTORE_DONE.value)
+    def snapshot_restore_done(self):
+        return check_phase(self, self.VolumeSnapshotRestorePhase.SNAPSHOT_RESTORE_DONE.value)
 
-        def in_progress(self):
-            return check_phase(self, self.VolumeSnapshotRestorePhase.IN_PROGRESS.value)
+    def in_progress(self):
+        return check_phase(self, self.VolumeSnapshotRestorePhase.IN_PROGRESS.value)
 
-        def failed(self):
-            return check_phase(self, self.VolumeSnapshotRestorePhase.FAILED.value)
+    def failed(self):
+        return check_phase(self, self.VolumeSnapshotRestorePhase.FAILED.value)
 
-        def partially_failed(self):
-            return check_phase(self, self.VolumeSnapshotRestorePhase.PARTIALLY_FAILED.value)
-
-    def replication_destination_completed(self):
-        replication_destination_list = ReplicationDestination.get()
-        rep_ds_list = [rd for rd in replication_destination_list if
-                       rd.labels.get(ReplicationDestination.Label.VOLUME_SNAPSHOT_RESTORE.value) == self.name]
-        if len(rep_ds_list) > 1:
-            logger.info(f"There are more than one ReplicationDestination for VSR {self.name}")
-            return None
-        if len(rep_ds_list) == 0:
-            logger.info(f"ReplicationDestination was not created for VSR {self.name} or it was already deleted by the "
-                        f"controller")
-            return None
-
-        return rep_ds_list[0]
+    def partially_failed(self):
+        return check_phase(self, self.VolumeSnapshotRestorePhase.PARTIALLY_FAILED.value)
 
     def done(self):
         """
@@ -63,6 +49,21 @@ class VolumeSnapshotRestore(NamespacedResource):
         """
         log_status(self)
         return not self.in_progress()
+
+    def replication_destination_completed(self):
+        replication_destination_list = ReplicationDestination.get()
+        rep_ds_list = [rd for rd in replication_destination_list if
+                       rd.labels.get(ReplicationDestination.Label.VOLUME_SNAPSHOT_RESTORE.value) == self.name]
+        if len(rep_ds_list) > 1:
+            logger.info(f"There are more than one ReplicationDestination for VSR {self.name}")
+            return False
+        if len(rep_ds_list) == 0:
+            logger.info(f"ReplicationDestination was not created for VSR {self.name} or it was already deleted by the "
+                        f"controller")
+            return True
+
+        return rep_ds_list[0]
+
 
     @classmethod
     def get_by_restore_name(cls, restore_name):
@@ -89,7 +90,7 @@ class VolumeSnapshotRestore(NamespacedResource):
         if not vsr_list:
             vsr_list = list(cls.get())
         vsr_filtered_list = list(filter(
-            lambda x: x.instance.status.sourcePVCData.name == src_pvc_name, vsr_list))
+            lambda x: x.instance.spec['volumeSnapshotMoverBackupRef']['sourcePVCData']['name'] == src_pvc_name, vsr_list))
 
         vsrl_size = len(vsr_filtered_list)
         if vsrl_size > 1:
@@ -106,13 +107,13 @@ class VolumeSnapshotRestore(NamespacedResource):
         rep_ds_list = [rd for rd in replication_destination_list if
                        rd.labels.get("datamover.oadp.openshift.io/vsr") == self.name]
         if len(rep_ds_list) > 1:
-            logger.error(f"There are more than one ReplicationDestination for VSR {self.name}")
-            return None
-        if len(rep_ds_list) == 0:
-            logger.error(f"ReplicationDestination was not created for VSR {self.name}")
-            return None
+            logger.info(f"There are more than one ReplicationDestination for VSR {self.name}")
 
-        return rep_ds_list[0]
+        if len(rep_ds_list) == 0:
+            logger.info(f"ReplicationDestination was not created for VSR {self.name} or it was already deleted by the "
+                        f"controller")
+
+        return rep_ds_list
 
     def wait_for_done(self, wait_timeout=240, sleep=5):
         return wait_for(

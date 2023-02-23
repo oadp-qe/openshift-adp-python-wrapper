@@ -1,6 +1,7 @@
 import logging
 from enum import Enum
 
+from kubernetes.client.rest import ApiException
 from oadp_constants.resources import ApiGroups
 from ocp_resources.resource import NamespacedResource
 
@@ -47,5 +48,5 @@ class ReplicationDestination(NamespacedResource):
                  rs_reconcile_status is None)
 
         # This will happen only if VSB has completed, and thus RS is removed from the ns
-        except AttributeError as e:
+        except (ApiException, AttributeError) as e:
             return True

@@ -28,24 +28,44 @@ class VolumeSnapshotBackup(NamespacedResource):
         PARTIALLY_FAILED = "PartiallyFailed"
 
     def snapshot_backup_done(self):
+        """
+        Check if the phase of the VolumeSnapshotBackup is SnapshotBackupDone
+        @return: True if the phase of the VolumeSnapshotBackup is SnapshotBackupDone; False otherwise
+        """
         return check_phase(self, self.VolumeSnapshotBackupPhase.SNAPSHOT_BACKUP_DONE.value)
 
     def completed(self):
+        """
+        Check if the phase of the VolumeSnapshotBackup is Completed
+        @return: True if the phase of the VolumeSnapshotBackup is Completed; False otherwise
+        """
         return check_phase(self, self.VolumeSnapshotBackupPhase.COMPLETED.value)
 
     def in_progress(self):
+        """
+        Check if the phase of the VolumeSnapshotBackup is InProgress
+        @return: True if the phase of the VolumeSnapshotBackup is InProgress; False otherwise
+        """
         return check_phase(self, self.VolumeSnapshotBackupPhase.IN_PROGRESS.value)
 
     def failed(self):
+        """
+        Check if the phase of the VolumeSnapshotBackup is Failed
+        @return: True if the phase of the VolumeSnapshotBackup is Failed; False otherwise
+        """
         return check_phase(self, self.VolumeSnapshotBackupPhase.FAILED.value)
 
     def partially_failed(self):
+        """
+        Check if the phase of the VolumeSnapshotBackup is PartiallyFailed
+        @return: True if the phase of the VolumeSnapshotBackup is PartiallyFailed; False otherwise
+        """
         return check_phase(self, self.VolumeSnapshotBackupPhase.PARTIALLY_FAILED.value)
 
     def done(self):
         """
-        Check is VSB process is done
-        @return: True if the VSB process is not running; False otherwise
+        Check if the VolumeSnapshotBackup process is done
+        @return: True if the VolumeSnapshotBackup process is not running; False otherwise
         """
         log_status(self)
         return not self.in_progress()
@@ -53,9 +73,9 @@ class VolumeSnapshotBackup(NamespacedResource):
     @classmethod
     def get_by_backup_name(cls, backup_name):
         """
-        Returns a list of VSBs by backup name
-        @param backup_name: the backup name to get the VSB/s by
-        @return: returns a list of VSB/s by backup name; empty list otherwise
+        Returns a list of VolumeSnapshotBackup by backup name
+        @param backup_name: the backup name to get the VolumeSnapshotBackup by
+        @return: returns a list of VolumeSnapshotBackup by backup name; empty list otherwise
         """
         vsbl = list(cls.get(label_selector=f"{Backup.Label.BACKUP.value}={backup_name}"))
 
@@ -65,15 +85,19 @@ class VolumeSnapshotBackup(NamespacedResource):
         return vsbl
 
     @classmethod
-    def get_by_source_pvc(cls, src_pvc_name: str, vsb_list: list = None):
+    def get_by_source_pvc(cls, src_pvc_name: str, vsb_list: list = None) -> list:
         """
-        Returns a list of VSBS by source PVC
-        @param src_pvc_name: PVC name which the VSB/s point to
-        @param vsb_list: the list of VSB/s to filter based on the PVC name; in case not provided, it will be retrieved
-        @return: a list of VSBs by source PVC; empty list otherwise
+        Returns a list of VolumeSnapshotBackup by source PVC @param src_pvc_name: PVC name which the
+        VolumeSnapshotBackup point to @param vsb_list: the list of VolumeSnapshotBackup to filter based on the PVC
+        name; in case not provided, it will be retrieved
+        @return: a list of VolumeSnapshotBackup by source PVC; empty list otherwise
         """
+
+        # If no VolumeSnapshotBackup list is provided, get all VolumeSnapshotBackup
         if not vsb_list:
             vsb_list = list(cls.get())
+
+        # Filter VSBs by source PVC name
         vsb_filtered_list = list(filter(
             lambda x: x.instance.status.sourcePVCData.name == src_pvc_name, vsb_list))
 
@@ -93,13 +117,12 @@ class VolumeSnapshotBackup(NamespacedResource):
                        rs.labels.get(ReplicationSource.Label.VOLUME_SNAPSHOT_BACKUP.value) == self.name]
         if len(rep_sr_list) > 1:
             logger.info(f"There are more than one ReplicationSource for VSB {self.name}")
-            return None
+
         if len(rep_sr_list) == 0:
             logger.info(f"ReplicationSource was not created for VSB {self.name} or it was already deleted by the "
                         f"controller")
-            return None
 
-        return rep_sr_list[0]
+        return rep_sr_list
 
     def wait_for_done(self, wait_timeout=240, sleep=5):
         return wait_for(
@@ -108,3 +131,5 @@ class VolumeSnapshotBackup(NamespacedResource):
             sleep=sleep,
             wait_timeout=wait_timeout
         )
+
+

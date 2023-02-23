@@ -5,6 +5,9 @@ from oadp_constants.resources import ApiGroups
 from oadp_utils.wait import wait_for
 from oadp_utils.phase import check_phase
 
+from oadp_utils.phase import log_status
+
+
 
 class Restore(NamespacedResource):
     api_group = ApiGroups.VELERO_API_GROUP.value
@@ -60,6 +63,10 @@ class Restore(NamespacedResource):
     def failed(self):
         return check_phase(self, self.RestorePhase.FAILED.value)
 
+    def done(self):
+        log_status(self)
+        return not ( self.in_progress() or self.new() )
+
     def wait_for_success(self, wait_timeout=240, sleep=5):
         return wait_for(
             condition_function=self.completed,
@@ -105,3 +112,12 @@ class Restore(NamespacedResource):
         if len(vsrl) == 0:
             return False
         return True
+
+    def wait_for_vsr(self, resource, wait_timeout=240, sleep=5):
+        return wait_for(
+            condition_function=self.vsr_exists,
+            description=f"VolumeSnapshotBackup resource to exist for the backup {self.name}",
+            sleep=sleep,
+            wait_timeout=wait_timeout,
+            resource_class=resource
+        )
