@@ -5,9 +5,9 @@ from ocp_resources.resource import NamespacedResource
 from oadp_utils.wait import wait_for
 from oadp_utils.phase import check_phase
 
-from oadp_resources.oadp.datamover.volume_snapshot_backup import VolumeSnapshotBackup
 
 from oadp_utils.phase import log_status
+
 
 
 class Backup(NamespacedResource):
@@ -53,6 +53,9 @@ class Backup(NamespacedResource):
 
         # Deleting means the backup and all its associated data are being deleted.
         DELETING = "Deleting"
+
+    class Label(Enum):
+        BACKUP = "velero.io/backup-name"
 
     class HookErrorMode(Enum):
         CONTINUE = "Continue"
@@ -148,8 +151,17 @@ class Backup(NamespacedResource):
             wait_timeout=wait_timeout
         )
 
-    def vsb_exists(self):
-        vsbl = VolumeSnapshotBackup.get_by_backup_name(backup_name=self.name)
+    def vsb_exists(self, resource_class):
+        vsbl = resource_class.get_by_backup_name(backup_name=self.name)
         if len(vsbl) == 0:
             return False
         return True
+
+    def wait_for_vsb(self, resource, wait_timeout=240, sleep=5):
+        return wait_for(
+            condition_function=self.vsb_exists,
+            description=f"VolumeSnapshotBackup resource to exist for the backup {self.name}",
+            sleep=sleep,
+            wait_timeout=wait_timeout,
+            resource_class=resource
+        )
