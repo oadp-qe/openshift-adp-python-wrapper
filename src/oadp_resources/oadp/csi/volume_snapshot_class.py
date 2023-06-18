@@ -6,6 +6,9 @@ from enum import Enum
 class VolumeSnapshotClass(Resource):
     api_group = ApiGroups.VOLUME_SNAPSHOT_CLASS.value
 
+    class Annotations(Enum):
+        IS_DEFAULT_CLASS = "snapshot.storage.kubernetes.io/is-default-class"
+
     class Platform(Enum):
         class Aws(Enum):
             PROVIDER = "aws"
