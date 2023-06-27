@@ -39,7 +39,7 @@ class StorageClass(Resource):
                 volume_binding_mode=self.volume_binding_mode,
             )
 
-    def add_provisioner(self,provisioner=None, volume_binding_mode=None):
+    def set_provisioner(self,provisioner=None, volume_binding_mode=None):
         if not self.res:
             super().to_dict()
         self.res["provisioner"]=provisioner
