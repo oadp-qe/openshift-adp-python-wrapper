@@ -34,7 +34,7 @@ class StorageClass(Resource):
             super().to_dict()
 
         if not self.yaml_file and self.provisioner:
-            self.add_provisioner(
+            self.set_provisioner(
                 provisioner=self.provisioner,
                 volume_binding_mode=self.volume_binding_mode,
             )
